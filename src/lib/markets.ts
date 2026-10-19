@@ -17,8 +17,6 @@ export const markets = [
   { symbol: "UNI", name: "Uniswap", id: "uniswap" },
 ] as const;
 
-export type Market = (typeof markets)[number];
-
 export type Quote = {
   price: number;
   change24h: number;

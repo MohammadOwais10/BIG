@@ -37,8 +37,7 @@ html {
   scroll-padding-top: 5.5rem;
 }
 
-section[id],
-[id="levels"] {
+section[id] {
   scroll-margin-top: 5.5rem;
 }
 
@@ -106,6 +105,41 @@ body {
   box-shadow:
     0 0 0 1px rgba(255, 255, 255, 0.03) inset,
     0 24px 80px rgba(0, 0, 0, 0.45);
+}
+
+/* Shared type tokens — one eyebrow style per hierarchy level. */
+@layer components {
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.32em;
+    color: #93a7de;
+  }
+
+  .panel-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.24em;
+    color: var(--blue-soft);
+  }
+
+  .panel-label-muted {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: #8a99c4;
+  }
+
+  .micro-label {
+    font-size: 9.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: #8a99c4;
+  }
 }
 
 .hero-glow {
@@ -188,42 +222,23 @@ body {
 
 /* Surface primitives — restrained by default so accent stays meaningful. */
 
-.surface {
-  background: linear-gradient(
-    155deg,
-    rgba(14, 26, 54, 0.62) 0%,
-    rgba(6, 11, 25, 0.38) 100%
-  );
-  border: 1px solid rgba(127, 168, 255, 0.1);
-  transition:
-    border-color 0.35s ease,
-    background 0.35s ease;
-}
-
-.surface-hover:hover {
-  border-color: rgba(127, 168, 255, 0.32);
-}
-
 .surface-head {
   background: #0a1226;
   border-bottom: 1px solid var(--line);
 }
 
-.section-edge::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(127, 168, 255, 0.28),
-    transparent
-  );
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .marquee-track {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .marquee-track,
+  .float-soft,
+  .animate-ping {
+    animation: none;
+  }
+
+  .shimmer-line::after {
     animation: none;
   }
 }

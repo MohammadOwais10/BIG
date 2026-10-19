@@ -23,7 +23,7 @@ export function SiteHeader() {
           : "bg-transparent"
       }`}
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4 lg:px-10">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-4 lg:px-10">
         <Link href="/" className="group flex items-center gap-3">
           <Image
             src="/logo.png"
@@ -34,7 +34,11 @@ export function SiteHeader() {
             priority
           />
         </Link>
-        <nav className="hidden items-center gap-8 lg:flex">
+
+        <nav
+          aria-label="Main"
+          className="hidden items-center gap-8 lg:flex"
+        >
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -45,11 +49,14 @@ export function SiteHeader() {
             </Link>
           ))}
         </nav>
+
         <Link
           href="#contact"
-          className="blue-border relative overflow-hidden rounded-full px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--blue-soft)] transition hover:shadow-[0_0_40px_rgba(18,85,255,0.3)]"
+          className="blue-border relative inline-flex shrink-0 items-center overflow-hidden rounded-full px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--blue-soft)] transition hover:shadow-[0_0_40px_rgba(18,85,255,0.3)] sm:px-5 sm:text-[11px] sm:tracking-[0.18em]"
         >
-          <span className="relative z-10">Become a Member</span>
+          <span className="relative z-10 whitespace-nowrap">
+            Become a Member
+          </span>
         </Link>
       </div>
     </header>

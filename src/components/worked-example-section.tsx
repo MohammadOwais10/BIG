@@ -11,14 +11,12 @@ export function WorkedExampleSection() {
   return (
     <section
       id="example"
-      className="relative border-y border-[var(--line)] py-24 lg:py-32"
+      className="relative border-t border-[var(--line)] py-16 sm:py-24 lg:py-32"
     >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(900px_440px_at_30%_0%,rgba(18,85,255,0.12),transparent_62%)]" />
       <div className="relative mx-auto max-w-7xl px-6 lg:px-10">
         <Reveal>
-          <p className="text-[11px] font-medium uppercase tracking-[0.32em] text-[#93A7DE]">
-            {workedExample.eyebrow}
-          </p>
+          <p className="eyebrow">{workedExample.eyebrow}</p>
           <h2 className="mt-4 max-w-3xl font-display text-4xl leading-[1.02] tracking-tight text-white md:text-5xl">
             {workedExample.title}
           </h2>
@@ -31,9 +29,7 @@ export function WorkedExampleSection() {
           <div className="mt-10 grid gap-px overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--line)] sm:grid-cols-3">
             {workedExample.assumptions.map((item) => (
               <div key={item.k} className="bg-[#050A16] px-5 py-5">
-                <p className="text-[10px] uppercase tracking-[0.18em] text-[#6E7E9F]">
-                  {item.k}
-                </p>
+                <p className="micro-label">{item.k}</p>
                 <p className="mt-2 font-display text-xl text-[var(--blue-soft)]">
                   {item.v}
                 </p>
@@ -45,15 +41,16 @@ export function WorkedExampleSection() {
         <div className="mt-8 grid gap-6 lg:grid-cols-2">
           {workedExample.steps.map((step, index) => (
             <Reveal key={step.index} delay={index * 0.08}>
-              <article className="panel-glass h-full rounded-3xl p-8">
+              <article className="panel-glass h-full rounded-3xl p-6 sm:p-8">
                 <div className="flex items-center gap-4">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-full border border-[var(--line)] bg-[#0B1836] text-sm font-semibold text-[var(--blue-soft)]">
+                  <span
+                    aria-hidden
+                    className="flex h-11 w-11 items-center justify-center rounded-full border border-[var(--line)] bg-[#0B1836] text-sm font-semibold text-[var(--blue-soft)]"
+                  >
                     {step.index}
                   </span>
                   <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8090B4]">
-                      {step.tag}
-                    </p>
+                    <p className="panel-label-muted">{step.tag}</p>
                     <h3 className="mt-1 font-display text-2xl text-white">
                       {step.title}
                     </h3>
@@ -81,12 +78,21 @@ export function WorkedExampleSection() {
           ))}
         </div>
 
+        <Reveal delay={0.09}>
+          <div className="mt-8 rounded-2xl border border-[rgba(255,193,99,0.32)] bg-[rgba(255,193,99,0.06)] px-6 py-5">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#FFC163]">
+              Level Unlocking
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-[#E4D4B5]">
+              {workedExample.unlockNote}
+            </p>
+          </div>
+        </Reveal>
+
         <Reveal delay={0.1}>
           <div className="panel-glass mt-8 overflow-hidden rounded-3xl">
-            <div className="border-b border-[var(--line)] bg-[#0A1226] px-7 py-6 md:px-9">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-[var(--blue-soft)]">
-                Payout Map
-              </p>
+            <div className="surface-head px-7 py-6 md:px-9">
+              <p className="panel-label">Payout Map</p>
               <h3 className="mt-3 font-display text-2xl text-white md:text-3xl">
                 Who receives what
               </h3>
@@ -109,14 +115,12 @@ export function WorkedExampleSection() {
                       <div
                         className={`w-full max-w-xs rounded-2xl border px-6 py-5 ${toneStyles[member.tone]}`}
                       >
-                        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8090B4]">
-                          {member.label}
-                        </p>
+                        <p className="panel-label-muted">{member.label}</p>
                         <p className="mt-2 font-display text-2xl text-white">
                           {member.invested}
                         </p>
                         <p className="mt-2 text-xs text-[#93A7DE]">
-                          Receives{" "}
+                          Network income{" "}
                           <span className="font-semibold text-[var(--blue-soft)]">
                             {member.earned}
                           </span>
@@ -129,7 +133,7 @@ export function WorkedExampleSection() {
 
               <div className="flex flex-col justify-center gap-4">
                 <div className="overflow-hidden rounded-2xl border border-[var(--line)]">
-                  <div className="grid grid-cols-[1fr_auto] bg-[#0A1226] px-5 py-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--blue-soft)]">
+                  <div className="surface-head grid grid-cols-[1fr_auto] px-5 py-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--blue-soft)]">
                     <span>Flow</span>
                     <span className="text-right">Amount</span>
                   </div>
@@ -138,11 +142,11 @@ export function WorkedExampleSection() {
                       key={`${flow.from}-${flow.to}-${flow.label}`}
                       className="grid grid-cols-[1fr_auto] items-center gap-4 border-t border-[var(--line)] bg-[#070D1E]/70 px-5 py-4"
                     >
-                      <div className="flex items-center gap-2.5">
+                      <div className="flex flex-wrap items-center gap-2.5">
                         <span className="font-mono text-sm text-white">
                           {flow.from}
                         </span>
-                        <span className="text-[#6E7E9F]">→</span>
+                        <span className="text-[#8A99C4]">→</span>
                         <span className="font-mono text-sm text-white">
                           {flow.to}
                         </span>
@@ -169,19 +173,13 @@ export function WorkedExampleSection() {
                       key={row.k}
                       className="rounded-2xl border border-[var(--line)] bg-[#060B19]/80 px-5 py-4"
                     >
-                      <dt className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--blue-soft)]">
-                        {row.k}
-                      </dt>
+                      <dt className="panel-label">{row.k}</dt>
                       <dd className="mt-2 font-mono text-sm text-[#C3CFE6]">
                         {row.v}
                       </dd>
                     </div>
                   ))}
                 </dl>
-
-                <p className="text-[11px] leading-relaxed text-[#8090B4]">
-                  {workedExample.tree.note}
-                </p>
               </div>
             </div>
           </div>

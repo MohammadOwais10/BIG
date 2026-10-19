@@ -8,9 +8,9 @@ export function HeroSection() {
   const reduce = useReducedMotion();
 
   return (
-    <section className="hero-glow relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 py-32 lg:px-10 lg:py-40">
+    <section className="hero-glow relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 py-24 sm:py-32 lg:px-10 lg:py-40">
       <div className="pointer-events-none absolute -right-24 top-16 h-[520px] w-[520px] rounded-full bg-[radial-gradient(circle,rgba(18,85,255,0.18),transparent_68%)] blur-2xl" />
-      <div className="pointer-events-none absolute -left-32 bottom-0 h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle,rgba(43,107,255,0.12),transparent_70%)] blur-2xl" />
+      <div className="pointer-events-none absolute -left-32 bottom-0 h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle,rgba(18,85,255,0.12),transparent_70%)] blur-2xl" />
 
       <div className="relative mx-auto flex w-full max-w-5xl flex-col items-center text-center">
         <motion.div
@@ -29,7 +29,6 @@ export function HeroSection() {
             priority
           />
         </motion.div>
-
 
         <motion.h1
           initial={reduce ? false : { opacity: 0, y: 22 }}
@@ -58,7 +57,7 @@ export function HeroSection() {
         >
           <a
             href="#earnings"
-            className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full bg-[linear-gradient(135deg,#1255FF,#1255FF)] px-7 py-3.5 text-[12px] font-semibold uppercase tracking-[0.16em] text-[#FFFFFF] shadow-[0_16px_50px_rgba(43,107,255,0.35)]"
+            className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full bg-[linear-gradient(135deg,#1255FF,#1255FF)] px-7 py-3.5 text-[12px] font-semibold uppercase tracking-[0.16em] text-[#FFFFFF] shadow-[0_16px_50px_rgba(18,85,255,0.35)]"
           >
             <span className="relative z-10">{hero.primaryCta}</span>
             <span className="relative z-10 transition group-hover:translate-x-0.5">
@@ -73,7 +72,6 @@ export function HeroSection() {
             {hero.secondaryCta}
           </a>
         </motion.div>
-
       </div>
     </section>
   );

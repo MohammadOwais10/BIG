@@ -15,14 +15,23 @@ const body = Manrope({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://big.com"),
-  title: "BIG | Transparent Investment & Earning Plan",
+  metadataBase: new URL("https://beingroup.com"),
+  title: "BeInGroup Global | Trading-Powered Investment & Partner Network",
   description:
-    "BIG — invest from 100 USD, earn 10%–12% monthly ROI, 5% direct commission and level income across 20 levels. Full withdrawal rules published.",
+    "BeInGroup Global — invest from 100 USD, earn 10%–12% ROI, 5% direct commission and level rewards across 20 levels. Full withdrawal and risk terms published.",
   openGraph: {
-    title: "BIG",
-    description: "Invest · Earn · Withdraw · Grow — a fully published plan.",
-    images: [{ url: "/logo.png" }],
+    title: "BeInGroup Global",
+    description:
+      "Participate in trading · Earn through structure · Grow with the network.",
+    images: [{ url: "/logo.png", width: 1918, height: 820, type: "image/png" }],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "BeInGroup Global",
+    description:
+      "Participate in trading · Earn through structure · Grow with the network.",
+    images: ["/logo.png"],
   },
 };
 
@@ -30,6 +39,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${display.variable} ${body.variable} h-full`}>
       <body className="min-h-full bg-[var(--background)] font-sans antialiased">
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:rounded-full focus:bg-[#1255FF] focus:px-5 focus:py-3 focus:text-sm focus:font-semibold focus:text-white"
+        >
+          Skip to content
+        </a>
         <div className="grain" aria-hidden />
         {children}
       </body>
