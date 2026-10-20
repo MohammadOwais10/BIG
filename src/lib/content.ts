@@ -1,157 +1,207 @@
 export const brand = {
   name: "BIG",
-  tagline: "Transparent Investment & Earning Plan",
-  motto: "Invest with clarity. Earn with structure.",
-  pillars: ["Invest", "Earn", "Withdraw", "Grow"] as const,
-  visionLine: "Small Entry. Serious Structure.",
+  legalName: "BeInGroup Global Ltd.",
+  tagline: "Trading-Powered Investment & Partner Network",
+  motto: "Participate in trading. Build a network. Grow together.",
+  visionLine: "Everybody benefits from trading.",
 };
 
 export const hero = {
   headlineLine1: "Invest 100 USD.",
-  headlineLine2: "Earn every month.",
-  body: "BIG gives every member the same simple opportunity — a low entry point, a consistent monthly return, and a compensation plan that rewards both trading income and team growth. Every number is published on this page.",
+  headlineLine2: "Earn from trading.",
+  body: "BeInGroup is a trading-focused financial platform built on structured Forex trading and a community-based partner network. Every number of the plan is published on this page.",
   primaryCta: "How You Earn",
   secondaryCta: "Investment Terms",
   stats: [
     { value: "100", unit: "USD", label: "Minimum Investment" },
-    { value: "10–12", unit: "%", label: "Monthly ROI" },
+    { value: "10–12", unit: "%", label: "ROI" },
     { value: "5", unit: "%", label: "Direct Commission" },
-    { value: "20", unit: "Levels", label: "Team Income Depth" },
+    { value: "20", unit: "Levels", label: "Network Reward Depth" },
+  ],
+};
+
+export const businessModel = {
+  eyebrow: "Business Model",
+  title: "One platform. Two roles.",
+  intro:
+    "Our business model is designed to bring together participants who provide capital to the platform and partners who help expand our community through referrals.",
+  panels: [
+    {
+      index: "01",
+      eyebrow: "Our Trading Model",
+      title: "Capital deployed in the company's trading operations",
+      body:
+        "Funds received through eligible participation in our programs are utilized as part of the company's trading operations, including Forex market activities.",
+      points: [
+        "Our trading team and technology infrastructure are responsible for managing the trading activities.",
+        "Activities are conducted according to the company's defined strategies, risk-management procedures, and operational policies.",
+        "A published set of strategy families is used, from discretionary approaches to AI-assisted execution — listed under Trading View below.",
+      ],
+    },
+    {
+      index: "02",
+      eyebrow: "Our Partner Network",
+      title: "Partners expand the community through referrals",
+      body:
+        "Participants may also have the opportunity to become partners and introduce new participants to the platform.",
+      points: [
+        "Our compensation plan provides defined rewards for qualifying promotional and network activity.",
+        "Commissions are subject to the applicable qualification criteria and terms.",
+      ],
+    },
   ],
 };
 
 export const packageTerms = {
   eyebrow: "Investment Package",
-  title: "One package. Four terms. No ambiguity.",
+  title: "One package. A published plan.",
   intro:
-    "Everything a member needs to know before joining is written here in plain numbers. There are no hidden tiers, no minimum rank, and no compulsory add-ons.",
+    "The BeInGroup investment plan, stated in plain numbers. Every figure below is part of the published terms of the plan.",
   terms: [
+    {
+      label: "ROI",
+      value: "10% – 12%",
+      note: "The promoter receives the stated ROI, generated from platform trading performance.",
+    },
+    {
+      label: "Direct Referral Commission",
+      value: "5 Percent (%)",
+      note: "Defined rewards for qualifying promotional and network activity. Commissions are subject to the applicable qualification criteria and terms.",
+    },
     {
       label: "Minimum Investment",
       value: "100 USD",
-      note: "The entry point for any new member. Additional top-ups can be made at any time.",
+      note: "The entry point for any new participant.",
     },
     {
-      label: "Monthly ROI",
-      value: "10% – 12%",
-      note: "Trade income is generated and distributed to the member every month, based on platform trading performance.",
+      label: "Minimum Withdrawal",
+      value: "15 USD",
+      note: "The lowest amount that can be requested in a single withdrawal.",
     },
     {
-      label: "Promoter Earning Cap",
-      value: "Up to 5x",
-      note: "A promoter can earn up to 5x of their initial investment in total earnings. Once this limit is reached, a top-up is required to continue earning.",
+      label: "Withdrawal Fee",
+      value: "5 Percent (%)",
+      note: "A processing fee of 5% is deducted from every withdrawal request.",
     },
     {
-      label: "Team Income Depth",
-      value: "20 Levels",
-      note: "Level income is calculated on the trade income generated across 20 levels of your downline.",
+      label: "Promoter Capping",
+      value: "5 Multiples (x)",
+      note: "Total earnings are capped at 5× the initial investment. Top-up to continue.",
     },
   ],
+  rewardDepth: {
+    label: "Network Reward Depth",
+    value: "20 Levels",
+    note: "Level rewards are calculated as a percentage of ROI generated across 20 levels of your network, unlocked as you add direct referrals.",
+  },
   howItWorks: {
-    title: "How a monthly cycle runs",
+    title: "How a cycle runs",
     steps: [
       {
         title: "Member invests",
-        detail: "A new member activates their account with a minimum investment of 100 USD.",
+        detail: "A new participant activates their account with a minimum investment of 100 USD.",
       },
       {
-        title: "Platform trades",
-        detail: "Funds are deployed into the trading system, which generates trade income for the month.",
+        title: "Capital is deployed",
+        detail: "Funds are allocated to the company's trading operations under the defined strategies and risk-management procedures.",
       },
       {
         title: "Income is credited",
-        detail: "Monthly ROI is credited to the member, and level income is shared across the upline.",
+        detail: "ROI is credited to the member, and level rewards are shared across the unlocked network.",
       },
       {
         title: "Member withdraws",
-        detail: "Funds can be withdrawn from 10 USD onwards, subject to the published withdrawal rules.",
+        detail: "Funds can be withdrawn from 15 USD onwards, subject to the published fee and deduction schedule.",
       },
     ],
-  },
-  projection: {
-    title: "Illustrative 6-month projection",
-    subtitle: "100 USD invested · 10% (floor) to 12% (target) monthly return",
-    note: "Projection is for illustration only. Actual returns depend on live trading performance and are never guaranteed.",
-    floorRate: 10,
-    targetRate: 12,
-    months: [0, 1, 2, 3, 4, 5, 6],
   },
   caps: [
     {
       title: "Before the cap",
       detail:
-        "Promoters earn monthly ROI plus direct and level income from their team, until total earnings reach 5x their initial investment.",
+        "Promoters earn ROI plus direct and level income from their network, until total earnings reach 5× their initial investment.",
       state: "earning",
     },
     {
-      title: "At 5x — the cap",
+      title: "At 5× — the cap",
       detail:
-        "Earnings stop accumulating. The investment balance stays intact and remains fully withdrawable.",
+        "Earnings stop accumulating. A top-up is required before earning can continue.",
       state: "capped",
     },
     {
       title: "Top-Up to resume",
       detail:
-        "A promoter re-invests to unlock a fresh earning cycle and continue receiving income from the network.",
+        "A promoter re-invests to start a fresh earning cycle and continue receiving income from the network.",
       state: "topup",
     },
   ],
+  disclaimer:
+    "ROI and rewards are not guaranteed and may be subject to market risk, fees, eligibility conditions, and applicable laws. Review the complete terms, withdrawal rules, and the legal/regulatory status of the operator before investing. Do not invest money you cannot afford to lose.",
+};
+
+export const tradingView = {
+  eyebrow: "Trading View",
+  title: "The market behind every return.",
+  intro:
+    "Every figure published on this page begins on a chart like this one. BeInGroup deploys capital through structured Forex trading, managed by our trading team and technology infrastructure under defined strategies and risk-management procedures.",
+  strategies: [
+    "Scalping",
+    "Hedging",
+    "Smart Money",
+    "Investing",
+    "AI Trading",
+  ],
+  chart: {
+    symbol: "EUR/USD",
+    market: "Forex · Spot",
+    ma: "MA 12",
+    note: "Chart data is simulated for illustration only. Actual returns depend on live trading performance and are never guaranteed.",
+  },
+
 };
 
 export const withdrawal = {
   eyebrow: "Withdrawal Rules",
-  title: "Four rules, applied every time.",
+  title: "Published fees and a clear exit schedule.",
   intro:
     "Withdrawals are processed against a fixed and public schedule. There are no discretionary holds once these conditions are met.",
   rules: [
     {
       label: "Minimum Withdrawal",
-      value: "10 USD",
-      detail: "The lowest amount that can be requested in a single withdrawal.",
+      value: "15 USD",
+      detail: "Any single withdrawal request starts at this amount.",
     },
     {
       label: "Withdrawal Fee",
       value: "5%",
-      detail: "A processing fee of 5% is deducted from every withdrawal request.",
-    },
-    {
-      label: "Exit Deduction — Before 6 Months",
-      value: "10%",
-      detail: "Withdrawals requested before the 6-month mark carry a 10% deduction on the amount.",
-    },
-    {
-      label: "Exit Deduction — After 6 Months",
-      value: "0%",
-      detail: "After 6 months, no deduction applies and funds can be withdrawn freely.",
+      detail: "Deducted from the requested amount before processing.",
     },
   ],
-  timeline: {
-    phaseOne: {
-      window: "Month 0 – 6",
-      title: "Early Exit Window",
-      fee: "10% deduction",
-      detail:
-        "Exiting during the first six months means a 10% deduction is applied to the withdrawn principal. Monthly ROI earned during this period remains with the member.",
-      tone: "restricted",
-    },
-    phaseTwo: {
-      window: "Month 6 onwards",
-      title: "Open Withdrawal Period",
-      fee: "No deduction",
-      detail:
-        "Once six months have passed, members withdraw freely without any early-exit penalty. Only the standard 5% processing fee applies.",
-      tone: "open",
-    },
+  deductions: {
+    eyebrow: "Capital Deduction Schedule",
+    title: "The longer you stay, the lower the deduction.",
+    intro:
+      "Withdrawals drawn against capital follow a declining deduction, measured from the date of investment. The deduction reduces over time and reaches zero after 150 days.",
+    rows: [
+      { window: "Before 30 days", deduction: "10%", rate: 10 },
+      { window: "Up to 60 days / 1st month", deduction: "8%", rate: 8 },
+      { window: "Up to 90 days / 2nd month", deduction: "6%", rate: 6 },
+      { window: "Up to 120 days / 3rd month", deduction: "4%", rate: 4 },
+      { window: "Up to 150 days / 4th month", deduction: "2%", rate: 2 },
+      { window: "After 150 days", deduction: "0%", rate: 0 },
+    ],
+    note:
+      "The deduction applies to the capital portion of a withdrawal. ROI already credited to the member is unaffected.",
   },
   feeNote:
-    "The 5% processing fee and any applicable early-exit deduction are shown transparently before every withdrawal is confirmed.",
+    "The applicable fee and any capital deduction are shown transparently before every withdrawal is confirmed.",
 };
 
 export const earnings = {
   eyebrow: "Earning Structure",
-  title: "Two ways to earn inside BIG.",
+  title: "Two ways to earn inside BeInGroup.",
   intro:
-    "Income comes from two independent streams. Direct income is generated the moment a referral invests. Level income is generated continuously from the trade income of your downline.",
+    "Income comes from two independent streams. Direct income is generated the moment a referral invests. Level income is earned as a percentage of the ROI generated by members in your network, unlocked level by level as you add direct referrals.",
   streams: [
     {
       id: "direct",
@@ -160,7 +210,7 @@ export const earnings = {
       rate: "5%",
       rateLabel: "of referred investment",
       summary:
-        "Refer a new member, and you earn 5% of their investment amount the moment they join and fund their account.",
+        "Refer a new participant, and you earn 5% of their investment amount the moment they join and fund their account.",
       points: [
         "Credited instantly on the referred member's first investment.",
         "Applies to every direct referral you personally introduce.",
@@ -177,50 +227,98 @@ export const earnings = {
       index: "02",
       name: "Level Income",
       rate: "20 levels",
-      rateLabel: "deep downline coverage",
+      rateLabel: "of ROI, unlocked level by level",
       summary:
-        "When members in your team generate trade income, you receive a percentage of it based on your level in their network.",
+        "Level rewards are calculated as a percentage of the ROI generated by the members below you.",
       points: [
-        "Calculated on trade income only — not on investment amounts.",
+        "Calculated as a percentage of ROI — not on investment amounts.",
         "Paid across 20 levels, from your closest referral to the deepest.",
         "Combines with direct income — both streams run at the same time.",
       ],
       meta: [
-        { k: "Trigger", v: "Downline income" },
-        { k: "Basis", v: "Trade income" },
+        { k: "Trigger", v: "Downline ROI" },
+        { k: "Basis", v: "ROI generated" },
         { k: "Depth", v: "20 levels" },
       ],
     },
   ],
   ladder: {
-    eyebrow: "Level Income Table",
-    title: "Percentage of downline trade income",
+    eyebrow: "Level Unlocking & ROI Rewards",
+    title: "Reward per level, and what unlocks it",
     subtitle:
-      "Your level is counted by distance: the member you referred is Level 1, their referral is Level 2, and so on up to Level 20.",
+      "Each reward is a percentage of the ROI generated in your network. Levels 1–5 each require 2 direct referrals to unlock; levels 6–20 each require 1 direct referral.",
     rows: [
-      { level: "Level 1", rate: 20, label: "Your direct referral" },
-      { level: "Level 2", rate: 10, label: "Referral of your referral" },
-      { level: "Level 3", rate: 7.5, label: "Third generation" },
-      { level: "Level 4", rate: 5, label: "Fourth generation" },
-      { level: "Level 5", rate: 2.5, label: "Fifth generation" },
-      { level: "Level 6 – 10", rate: 1, label: "Sixth to tenth generation" },
-      { level: "Level 11 – 20", rate: 0.5, label: "Eleventh to twentieth generation" },
+      { level: "Promoter / You", rate: 12, label: "Your personal ROI (top of 10%–12%)", requirement: "—" },
+      { level: "Level 1", rate: 20, label: "Your direct referral", requirement: "2 direct referrals" },
+      { level: "Level 2", rate: 10, label: "Second generation", requirement: "2 direct referrals" },
+      { level: "Level 3", rate: 7.5, label: "Third generation", requirement: "2 direct referrals" },
+      { level: "Level 4", rate: 5, label: "Fourth generation", requirement: "2 direct referrals" },
+      { level: "Level 5", rate: 2.5, label: "Fifth generation", requirement: "2 direct referrals" },
+      { level: "Level 6 – 10", rate: 1, label: "Sixth to tenth generation", requirement: "1 direct referral each" },
+      { level: "Level 11 – 20", rate: 0.5, label: "Eleventh to twentieth generation", requirement: "1 direct referral each" },
     ],
     footerNote:
-      "Level income accrues only while the downline member remains active and trading.",
+      "Level rewards accrue only while the network member remains active and generating ROI.",
   },
+};
+
+export const forexRisk = {
+  eyebrow: "Understanding the Market",
+  title: "Why Forex trading is not everybody's job.",
+  intro:
+    "Forex provides access to a global financial market, but it involves significant financial risk. Prices can change rapidly and losses can occur. Here is what every participant should understand before allocating capital.",
+  risks: [
+    {
+      index: "01",
+      title: "Capital Can Be Lost",
+      detail:
+        "Forex trading does not guarantee profits. A trading position can lose value, and participants may lose part or all of the capital allocated to trading.",
+    },
+    {
+      index: "02",
+      title: "Leverage Increases Risk",
+      detail:
+        "Leverage allows a trader to control a larger position with a smaller amount of capital. It can magnify gains, but it magnifies losses too — even relatively small market movements can have a substantial effect on an account.",
+    },
+    {
+      index: "03",
+      title: "Markets Can Be Highly Volatile",
+      detail:
+        "Currency prices can move quickly in response to economic data, central-bank decisions, interest-rate changes, geopolitical developments, inflation, employment reports, market sentiment and unexpected global events — sometimes within seconds or minutes.",
+    },
+    {
+      index: "04",
+      title: "Successful Trading Requires Knowledge",
+      detail:
+        "Forex is not simply a matter of predicting whether a currency will rise or fall. Understanding market structure, risk management, position sizing, leverage, execution and trading costs is important.",
+    },
+    {
+      index: "05",
+      title: "Emotional Decisions Can Increase Losses",
+      detail:
+        "Fear, greed, overconfidence and the desire to recover previous losses can influence trading decisions. Without discipline and risk controls, these behaviours can increase financial losses.",
+    },
+    {
+      index: "06",
+      title: "Past Performance Does Not Predict Future Results",
+      detail:
+        "A trading strategy, trader or program may perform well in one period and poorly in another. Previous trading results should not be treated as a guarantee of future performance.",
+    },
+  ],
 };
 
 export const workedExample = {
   eyebrow: "Worked Example",
   title: "How the money actually moves.",
   intro:
-    "The example below follows three members from investment through team income. It uses 100 USD investments and 10 USD of monthly trade income per member so every figure is easy to verify.",
+    "The example below follows three members from investment through network income. It uses 100 USD investments and 10 USD of ROI per member so every figure is easy to verify.",
   assumptions: [
     { k: "Investment per member", v: "100 USD" },
-    { k: "Monthly trade income per member", v: "10 USD" },
-    { k: "Total trades per month", v: "2 signals" },
+    { k: "ROI per member", v: "10 USD" },
+    { k: "Direct commission", v: "5%" },
   ],
+  unlockNote:
+    "Level rewards are shown as if each level's direct-referral requirement is already met — Level 1 requires 2 direct referrals, Level 2 requires 2 direct referrals. Under the plan, a level starts paying only once its requirement is met.",
   steps: [
     {
       index: "01",
@@ -240,14 +338,14 @@ export const workedExample = {
       index: "02",
       tag: "Step 2",
       title: "Level Income",
-      summary: "Team income is paid on trade income, not on investment.",
+      summary: "Level rewards are paid as a percentage of the ROI generated below you.",
       lines: [
-        { text: "Member B begins trading and earns 10 USD of trade income for the month.", tone: "plain" },
+        { text: "Member B generates 10 USD of ROI.", tone: "plain" },
         {
           text: "Member A sits at Level 1 to Member B → 20% of 10 USD = 2 USD.",
           tone: "highlight",
         },
-        { text: "Member B refers Member C and earns 20% of C's trade income at Level 1.", tone: "plain" },
+        { text: "Member B refers Member C and earns 20% of C's ROI at Level 1.", tone: "plain" },
         {
           text: "Member A moves to Level 2 to Member C → 10% of 10 USD = 1 USD.",
           tone: "highlight",
@@ -274,37 +372,34 @@ export const workedExample = {
       { k: "Member B", v: "5 USD direct + 2 USD (L1) = 7 USD" },
       { k: "Member C", v: "New join — 5 USD paid to Member B on investment" },
     ],
-    note: "Values are calculated on the assumptions listed above and change with actual team size and trade income.",
   },
 };
 
 export const gettingStarted = {
   eyebrow: "Joining",
   title: "From signup to first payout.",
+  intro:
+    "Four steps stand between a new account and a first withdrawal. The same path applies to every member, in the same order.",
   steps: [
     {
-      index: "01",
       title: "Register",
       detail:
         "Create your member account through the official channel and complete identity verification.",
     },
     {
-      index: "02",
       title: "Invest",
       detail:
         "Fund your account with the 100 USD minimum. Your member ID and referral link become active.",
     },
     {
-      index: "03",
-      title: "Trade & Earn",
+      title: "Participate & Earn",
       detail:
-        "Follow the scheduled trading signals. Monthly ROI and team income post to your dashboard.",
+        "Capital is deployed into the trading operation. ROI and network income post to your dashboard.",
     },
     {
-      index: "04",
       title: "Withdraw",
-      detail:
-        "Request a withdrawal from 10 USD. From 5% processing fee is applied automatically.",
+        detail:
+          "Request a withdrawal from 15 USD. The published fee and any capital deduction are applied automatically.",
     },
   ],
 };
@@ -312,12 +407,43 @@ export const gettingStarted = {
 export const missionVision = {
   mission: {
     title: "Our Mission",
-    body: "Our mission is to make structured income accessible to everyone regardless of capital or background. A 100 USD entry point, published percentages, and a compensation plan written in plain language remove the guesswork that usually comes with financial products.",
+    body: "Trading on any financial market is not everybody's job — most people try, lose and stop. Our vision is to build a technology-driven trading ecosystem where everybody can benefit from trading activity indirectly, and where partners can grow a structured network within a clearly defined business model.",
   },
   vision: {
     title: "Our Vision",
-    body: "We are building a long-term platform where trading performance and team activity are rewarded through one transparent framework — supported by technology, clear reporting, and governance that members can verify.",
+    body: "We aim to develop a platform where anybody can participate for trading benefits, while partners build and manage their referral networks through dedicated digital tools.",
   },
+};
+
+export const principles = {
+  eyebrow: "Our Approach",
+  title: "Four principles behind every decision.",
+  items: [
+    {
+      index: "01",
+      title: "Trading",
+      detail:
+        "We do not depend on any single strategy. Capital is deployed across structured Forex trading using multiple strategy families, managed by our trading team and technology infrastructure.",
+    },
+    {
+      index: "02",
+      title: "Technology",
+      detail:
+        "Digital infrastructure for account, network and commission management.",
+    },
+    {
+      index: "03",
+      title: "Transparency",
+      detail:
+        "Clearly communicating applicable program terms, qualification requirements, fees, risks and rewards.",
+    },
+    {
+      index: "04",
+      title: "Community",
+      detail:
+        "Building a global network through legitimate referrals and partner relationships.",
+    },
+  ],
 };
 
 export const leadership = [
@@ -325,8 +451,8 @@ export const leadership = [
     name: "Trading Operations",
     role: "Platform Performance",
     focus: "Live Trading",
-    experience: "Accountable for monthly trade income",
-    bio: "Runs the trading schedule that generates the monthly ROI, and signs off on the performance figure used for every payout.",
+    experience: "Accountable for trade income",
+    bio: "Runs the trading schedule that generates the ROI, and signs off on the performance figure used for every payout.",
   },
   {
     name: "Member Operations",
@@ -345,7 +471,11 @@ export const leadership = [
 ];
 
 export const corporate = {
-  entity: "Colorado Corporation",
+  eyebrow: "Corporate Information",
+  title: "Registered, published, and open to verification.",
+  intro:
+    "Registered office and governance details for members, partners, and regulators.",
+  entity: "BeInGroup Global Ltd.",
   entityType: "Registered corporation",
   jurisdiction: "State of Colorado, United States",
   address: [
@@ -354,7 +484,7 @@ export const corporate = {
     "United States of America",
   ],
   statement:
-    "BIG operates with a commitment to transparency, innovation, and long-term business development while delivering technology-driven trading solutions for its global member community.",
+    "BeInGroup operates with a commitment to transparency, innovation, and long-term business development while delivering technology-driven trading solutions for its global member community.",
   principles: [
     {
       k: "Published Terms",
@@ -375,11 +505,26 @@ export const corporate = {
   ],
 };
 
-
 export const navLinks = [
+  { href: "#model", label: "Model" },
   { href: "#package", label: "Package" },
+  { href: "#trading", label: "Trading" },
+  { href: "#withdrawal", label: "Withdrawal" },
+  { href: "#earnings", label: "Earnings" },
+  { href: "#start", label: "Get Started" },
+] as const;
+
+export const footerLinks = [
+  { href: "#model", label: "Business Model" },
+  { href: "#package", label: "Package" },
+  { href: "#trading", label: "Trading View" },
   { href: "#withdrawal", label: "Withdrawal" },
   { href: "#earnings", label: "Earnings" },
   { href: "#levels", label: "Levels" },
+  { href: "#example", label: "Worked Example" },
+  { href: "#start", label: "Get Started" },
+  { href: "#risk", label: "Forex Risk" },
+  { href: "#mission", label: "Mission" },
+  { href: "#leadership", label: "Leadership" },
   { href: "#corporate", label: "Company" },
 ] as const;

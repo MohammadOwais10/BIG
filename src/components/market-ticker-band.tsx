@@ -82,8 +82,8 @@ export function MarketTickerBand() {
           >
             <span className="font-display text-[13px] font-semibold tracking-[0.06em] text-[#DCE6FF] transition-colors group-hover:text-white">
               {market.symbol}
-              <span className="text-[10px] font-medium tracking-[0.14em] text-[#5C6E92]">
-                /USDT
+              <span className="text-[10px] font-medium tracking-[0.14em] text-[#8A99C4]">
+                /USD
               </span>
             </span>
 
@@ -94,7 +94,7 @@ export function MarketTickerBand() {
             <span
               className={`ticker-numeric inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 font-display text-[10.5px] font-semibold ${
                 !quote
-                  ? "bg-white/5 text-[#5C6E92]"
+                  ? "bg-white/5 text-[#8A99C4]"
                   : isUp
                     ? "bg-[#3ddc97]/12 text-[#3ddc97]"
                     : "bg-[#ff6b6b]/12 text-[#ff6b6b]"
@@ -143,7 +143,7 @@ export function MarketTickerBand() {
       <span className="sr-only" role="status">
         {status === "error"
           ? "Live market prices are temporarily unavailable."
-          : "Live market prices in USDT."}
+          : "Live market prices in USD."}
       </span>
     </div>
   );
