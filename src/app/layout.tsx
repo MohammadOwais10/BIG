@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Manrope } from "next/font/google";
 import "./globals.css";
+import { Providers } from "@/components/providers";
 
 const display = Space_Grotesk({
   variable: "--font-display",
@@ -31,7 +32,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en" className={`${display.variable} ${body.variable} h-full`}>
       <body className="min-h-full bg-[var(--background)] font-sans antialiased">
         <div className="grain" aria-hidden />
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

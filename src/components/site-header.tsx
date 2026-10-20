@@ -45,12 +45,20 @@ export function SiteHeader() {
             </Link>
           ))}
         </nav>
-        <Link
-          href="#contact"
-          className="blue-border relative overflow-hidden rounded-full px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--blue-soft)] transition hover:shadow-[0_0_40px_rgba(18,85,255,0.3)]"
-        >
-          <span className="relative z-10">Become a Member</span>
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/login"
+            className="rounded-full px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#CBD6EC] transition hover:text-[var(--blue-soft)]"
+          >
+            Sign in
+          </Link>
+          <Link
+            href="/register"
+            className="blue-border relative overflow-hidden rounded-full px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--blue-soft)] transition hover:shadow-[0_0_40px_rgba(18,85,255,0.3)]"
+          >
+            <span className="relative z-10">Become a Member</span>
+          </Link>
+        </div>
       </div>
     </header>
   );
