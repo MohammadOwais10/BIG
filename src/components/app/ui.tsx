@@ -18,8 +18,8 @@ export function Card({
   return (
     <div className={`surface rounded-2xl ${className}`}>
       {(title || action) && (
-        <div className="surface-head flex items-center justify-between rounded-t-2xl px-5 py-4">
-          <div>
+        <div className="surface-head flex flex-wrap items-center justify-between gap-3 rounded-t-2xl px-5 py-4">
+          <div className="min-w-0">
             {title && (
               <h3 className="font-display text-sm font-semibold uppercase tracking-[0.14em] text-[#E8EDFA]">
                 {title}
@@ -52,7 +52,7 @@ export function StatCard({
         {label}
       </p>
       <p
-        className={`mt-2 font-display text-2xl font-semibold ticker-numeric ${
+        className={`mt-2 font-display text-xl font-semibold ticker-numeric sm:text-2xl ${
           accent ? "blue-text" : "text-[#E8EDFA]"
         }`}
       >

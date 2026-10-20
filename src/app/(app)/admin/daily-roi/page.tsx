@@ -321,10 +321,10 @@ export default function DailyRoiPage() {
         ) : (
           <ul className="divide-y divide-[#16233F]">
             {exclusions.map((x) => (
-              <li key={x.id} className="flex items-center justify-between py-2.5">
-                <div>
-                  <p className="text-sm font-medium text-[#CBD6EC]">{x.user?.name}</p>
-                  <p className="text-xs text-[#5F7099]">{x.user?.email}{x.reason ? ` · ${x.reason}` : ""}</p>
+              <li key={x.id} className="flex items-center justify-between gap-3 py-2.5">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-[#CBD6EC]">{x.user?.name}</p>
+                  <p className="truncate text-xs text-[#5F7099]">{x.user?.email}{x.reason ? ` · ${x.reason}` : ""}</p>
                 </div>
                 <button
                   className="text-xs text-red-300 hover:underline"

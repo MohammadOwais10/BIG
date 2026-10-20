@@ -146,7 +146,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 export function PageHeader({ title, sub }: { title: string; sub?: string }) {
   return (
     <div className="mb-8">
-      <h1 className="font-display text-3xl font-bold text-[#E8EDFA]">{title}</h1>
+      <h1 className="font-display text-2xl font-bold text-[#E8EDFA] sm:text-3xl">{title}</h1>
       {sub && <p className="mt-1 text-sm text-[#8FA3CC]">{sub}</p>}
     </div>
   );

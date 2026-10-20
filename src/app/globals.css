@@ -222,6 +222,23 @@ body {
 
 /* Surface primitives — restrained by default so accent stays meaningful. */
 
+.surface {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(14px);
+}
+
+.surface-hover {
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.surface-hover:hover {
+  border-color: rgba(18, 85, 255, 0.55);
+  box-shadow: 0 8px 30px rgba(18, 85, 255, 0.12);
+}
+
 .surface-head {
   background: #0a1226;
   border-bottom: 1px solid var(--line);

@@ -80,7 +80,7 @@ export default function AdminSupportPage() {
                 <div className="flex items-center justify-between gap-3">
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium text-[#E8EDFA]">{t.subject}</p>
-                    <p className="text-[10px] text-[#5F7099]">
+                    <p className="truncate text-[10px] text-[#5F7099]">
                       {t.user?.name} · {t.user?.email} · {fmtDate(t.createdAt)}
                     </p>
                   </div>

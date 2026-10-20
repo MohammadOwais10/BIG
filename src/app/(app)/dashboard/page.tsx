@@ -88,8 +88,8 @@ export default function DashboardPage() {
               ) : (
                 <ul className="divide-y divide-[#16233F]">
                   {dailyRoi.map((p) => (
-                    <li key={p.id} className="flex items-center justify-between py-2.5">
-                      <div>
+                    <li key={p.id} className="flex items-center justify-between gap-3 py-2.5">
+                      <div className="min-w-0">
                         <p className="ticker-numeric text-sm font-medium text-[#CBD6EC]">
                           {String(p.roiDate).slice(0, 10)}
                         </p>
@@ -214,14 +214,14 @@ export default function DashboardPage() {
               ) : (
                 <ul className="divide-y divide-[#16233F]">
                   {recentTx.map((t) => (
-                    <li key={t.id} className="flex items-center justify-between py-3">
-                      <div>
-                        <p className="text-sm font-medium text-[#E8EDFA]">
+                    <li key={t.id} className="flex items-center justify-between gap-3 py-3">
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-medium text-[#E8EDFA]">
                           {t.type.replaceAll("_", " ")}
                         </p>
                         <p className="text-xs text-[#5F7099]">{new Date(t.createdAt).toLocaleString()}</p>
                       </div>
-                      <div className="flex items-center gap-3">
+                      <div className="flex shrink-0 items-center gap-3">
                         <Badge value={t.status} />
                         <span
                           className={`ticker-numeric text-sm font-semibold ${

@@ -213,10 +213,10 @@ export default function TeamPage() {
           ) : (
             <ul className="divide-y divide-[#16233F]">
               {listShown.map((u) => (
-                <li key={u.id} className="flex items-center justify-between py-3">
-                  <div>
-                    <p className="text-sm font-medium text-[#E8EDFA]">{u.name}</p>
-                    <p className="text-xs text-[#5F7099]">{u.referralCode} · joined {fmtDate(u.createdAt)}</p>
+                <li key={u.id} className="flex items-center justify-between gap-3 py-3">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium text-[#E8EDFA]">{u.name}</p>
+                    <p className="truncate text-xs text-[#5F7099]">{u.referralCode} · joined {fmtDate(u.createdAt)}</p>
                   </div>
                   <Badge value={u.status} />
                 </li>

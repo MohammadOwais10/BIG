@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { api, fmtUsd, fmtDate, ApiError } from "@/lib/api";
 import { PageHeader } from "@/components/app/app-shell";
-import { Card, Badge, Spinner, EmptyState, Pager, Field, inputCls, btnPrimary, btnGhost } from "@/components/app/ui";
+import { Card, Badge, Spinner, EmptyState, Pager, inputCls } from "@/components/app/ui";
 
 export default function AdminUsers() {
   const [users, setUsers] = useState<any[]>([]);
@@ -13,8 +13,6 @@ export default function AdminUsers() {
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<any>(null);
-  const [adjAmount, setAdjAmount] = useState("");
-  const [adjReason, setAdjReason] = useState("");
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
   async function load() {
@@ -46,19 +44,6 @@ export default function AdminUsers() {
       if (selected?.id === u.id) openUser(u.id);
     } catch (e) {
       setMsg({ ok: false, text: e instanceof ApiError ? e.message : "Failed" });
-    }
-  }
-
-  async function adjust(e: React.FormEvent) {
-    e.preventDefault();
-    try {
-      await api.adminAdjustWallet(selected.id, Number(adjAmount), adjReason);
-      setMsg({ ok: true, text: "Wallet adjusted and audited." });
-      setAdjAmount("");
-      setAdjReason("");
-      openUser(selected.id);
-    } catch (err) {
-      setMsg({ ok: false, text: err instanceof ApiError ? err.message : "Failed" });
     }
   }
 
@@ -98,15 +83,15 @@ export default function AdminUsers() {
             ) : (
               <ul className="divide-y divide-[#16233F]">
                 {users.map((u) => (
-                  <li key={u.id} className="flex items-center justify-between py-3">
-                    <button onClick={() => openUser(u.id)} className="text-left">
-                      <p className="text-sm font-medium text-[#E8EDFA] hover:text-[#7FA8FF]">{u.name}</p>
-                      <p className="text-xs text-[#5F7099]">
+                  <li key={u.id} className="flex flex-wrap items-center justify-between gap-2 py-3">
+                    <button onClick={() => openUser(u.id)} className="min-w-0 text-left">
+                      <p className="truncate text-sm font-medium text-[#E8EDFA] hover:text-[#7FA8FF]">{u.name}</p>
+                      <p className="truncate text-xs text-[#5F7099]">
                         {u.email} · {u.referralCode}
                         {u.referredBy ? ` · by ${u.referredBy.name}` : ""}
                       </p>
                     </button>
-                    <div className="flex items-center gap-2">
+                    <div className="flex shrink-0 items-center gap-2">
                       <Badge value={u.role} />
                       <Badge value={u.status} />
                       <button
@@ -155,19 +140,6 @@ export default function AdminUsers() {
                   {msg.text}
                 </p>
               )}
-
-              <form onSubmit={adjust} className="space-y-3 border-t border-[#16233F] pt-4">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#8FA3CC]">
-                  Wallet adjustment (audited)
-                </p>
-                <Field label="Amount (+ credit / − debit)">
-                  <input type="number" step="0.01" className={inputCls} value={adjAmount} onChange={(e) => setAdjAmount(e.target.value)} required />
-                </Field>
-                <Field label="Reason">
-                  <input className={inputCls} value={adjReason} onChange={(e) => setAdjReason(e.target.value)} required />
-                </Field>
-                <button className={`${btnPrimary} w-full`}>Apply adjustment</button>
-              </form>
             </div>
           )}
         </Card>

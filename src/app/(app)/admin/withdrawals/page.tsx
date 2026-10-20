@@ -145,7 +145,7 @@ export default function AdminWithdrawals() {
           </select>
         }
       >
-        <div className="mb-4 flex items-center justify-between gap-3 rounded-xl border border-[#1C2C50] bg-[#0A1226]/60 px-4 py-3">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#1C2C50] bg-[#0A1226]/60 px-4 py-3">
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#8FA3CC]">
               Payout wallet
