@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect } from "react";
 import { SiteHeader } from "@/components/site-header";
 import { HeroSection } from "@/components/hero-section";
 import { InstantDepositBar } from "@/components/instant-deposit-bar";
@@ -14,6 +17,10 @@ import { CorporateSection } from "@/components/corporate-section";
 import { SiteFooter } from "@/components/site-footer";
 
 export default function Home() {
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, []);
+
   return (
     <>
       <SiteHeader />

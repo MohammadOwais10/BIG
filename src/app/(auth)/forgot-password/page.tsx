@@ -54,7 +54,7 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="hero-glow flex min-h-screen items-center justify-center px-4 py-10">
+    <div className="hero-glow flex min-h-screen items-center justify-center px-4 py-24">
       <div className="panel-glass w-full max-w-md rounded-3xl p-8">
         <Link href="/" className="mb-8 flex justify-center">
           <Image src="/logo.png" alt="BIG" width={140} height={60} className="h-11 w-auto" />
