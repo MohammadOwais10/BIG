@@ -52,15 +52,17 @@ export function SiteHeader() {
         <div className="flex items-center gap-3">
           <Link
             href="/login"
-            className="rounded-full px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#CBD6EC] transition hover:text-[var(--blue-soft)]"
+            className="hidden rounded-full border border-[rgba(127,168,255,0.4)] px-5 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--blue-soft)] transition hover:border-[var(--blue-soft)] hover:bg-[rgba(127,168,255,0.12)] sm:inline-flex"
           >
-            Sign in
+            Login
           </Link>
           <Link
             href="/register"
-            className="blue-border relative overflow-hidden rounded-full px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--blue-soft)] transition hover:shadow-[0_0_40px_rgba(18,85,255,0.3)]"
+            className="relative inline-flex items-center gap-2 overflow-hidden rounded-full bg-[linear-gradient(135deg,#1255FF,#1255FF)] px-6 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-white shadow-[0_18px_60px_rgba(18,85,255,0.32)]"
           >
-            <span className="relative z-10">Become a Member</span>
+            <span className="relative z-10">Become a member</span>
+            <span className="relative z-10">→</span>
+            <span className="absolute inset-0 translate-x-[-120%] bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.35),transparent)] transition group-hover:translate-x-[120%] duration-700" />
           </Link>
         </div>
       </div>

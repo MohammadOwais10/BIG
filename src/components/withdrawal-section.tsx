@@ -54,6 +54,9 @@ export function WithdrawalSection() {
             <p className="mt-6 max-w-2xl text-base leading-relaxed text-[#BCC7DF]">
               {withdrawal.intro}
             </p>
+            <p className="mt-4 max-w-2xl text-base font-medium leading-relaxed text-[var(--blue-soft)]">
+              Insta deposit &amp; withdrawals through smart contract
+            </p>
           </Reveal>
 
           <Reveal delay={0.08}>

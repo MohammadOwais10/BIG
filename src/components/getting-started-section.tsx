@@ -17,6 +17,9 @@ export function GettingStartedSection() {
           <p className="mt-6 max-w-2xl text-base leading-relaxed text-[#BCC7DF]">
             {gettingStarted.intro}
           </p>
+          <p className="mt-3 max-w-2xl text-base font-medium leading-relaxed text-[var(--blue-soft)]">
+            BIG aims to make trading accessible to everyone by simplifying the trading journey and managing trading activities on behalf of its users.
+          </p>
         </Reveal>
 
         <div className="mt-14 grid gap-6 md:grid-cols-2 xl:grid-cols-4">

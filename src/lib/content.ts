@@ -7,9 +7,9 @@ export const brand = {
 };
 
 export const hero = {
-  headlineLine1: "Invest 100 USD.",
-  headlineLine2: "Earn from trading.",
-  body: "BeInGroup is a trading-focused financial platform built on structured Forex trading and a community-based partner network. Every number of the plan is published on this page.",
+  headlineLine1: "“Something BIG is about to happen”",
+  headlineLine2: "BIG will make everyone able to earn from trading, even if you don’t have knowledge of trading.",
+  body: "No Trading Experience? Start Here.",
   primaryCta: "How You Earn",
   secondaryCta: "Investment Terms",
   stats: [
@@ -22,9 +22,9 @@ export const hero = {
 
 export const businessModel = {
   eyebrow: "Business Model",
-  title: "One platform. Two roles.",
+  title: "Changing the Way People Think About Trading",
   intro:
-    "Our business model is designed to bring together participants who provide capital to the platform and partners who help expand our community through referrals.",
+    "BIG aims to make trading accessible to everyone by simplifying the trading journey and managing trading activities on behalf of its users, so you don’t need to be an expert trader to get started. One platform. Two roles.",
   panels: [
     {
       index: "01",
@@ -379,7 +379,7 @@ export const gettingStarted = {
   eyebrow: "Joining",
   title: "From signup to first payout.",
   intro:
-    "Four steps stand between a new account and a first withdrawal. The same path applies to every member, in the same order.",
+    "No Trading Experience? Start Here. Four steps stand between a new account and a first withdrawal. The same path applies to every member, in the same order.",
   steps: [
     {
       title: "Register",
@@ -509,20 +509,18 @@ export const navLinks = [
   { href: "#model", label: "Model" },
   { href: "#package", label: "Package" },
   { href: "#trading", label: "Trading" },
-  { href: "#withdrawal", label: "Withdrawal" },
   { href: "#earnings", label: "Earnings" },
-  { href: "#start", label: "Get Started" },
+  { href: "#withdrawal", label: "Withdrawal" },
 ] as const;
 
 export const footerLinks = [
   { href: "#model", label: "Business Model" },
   { href: "#package", label: "Package" },
   { href: "#trading", label: "Trading View" },
-  { href: "#withdrawal", label: "Withdrawal" },
   { href: "#earnings", label: "Earnings" },
+  { href: "#withdrawal", label: "Withdrawal" },
   { href: "#levels", label: "Levels" },
   { href: "#example", label: "Worked Example" },
-  { href: "#start", label: "Get Started" },
   { href: "#risk", label: "Forex Risk" },
   { href: "#mission", label: "Mission" },
   { href: "#leadership", label: "Leadership" },
