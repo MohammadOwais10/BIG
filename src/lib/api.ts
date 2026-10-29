@@ -110,8 +110,36 @@ export async function apiFetch<T = any>(
       json.details,
     );
   }
+  return json;
+}
 
-  return json as T;
+// Multipart upload variant (KYC documents) — browser sets the boundary itself
+export async function apiFetchForm<T = any>(path: string, form: FormData): Promise<T> {
+  const headers: Record<string, string> = {};
+  const token = getAccessToken();
+  if (token) headers.Authorization = `Bearer ${token}`;
+
+  let res = await fetch(`${API_URL}${path}`, { method: "POST", headers, body: form });
+
+  if (res.status === 401 && getRefreshToken()) {
+    refreshing = refreshing ?? tryRefresh();
+    const ok = await refreshing;
+    refreshing = null;
+    if (ok) {
+      headers.Authorization = `Bearer ${getAccessToken()}`;
+      res = await fetch(`${API_URL}${path}`, { method: "POST", headers, body: form });
+    } else {
+      clearTokens();
+      if (typeof window !== "undefined") window.location.href = "/login";
+      throw new ApiError(401, "Session expired. Please log in again.");
+    }
+  }
+
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok || json.success === false) {
+    throw new ApiError(res.status, json.message || "Request failed", json.errorCode, json.details);
+  }
+  return json;
 }
 
 export function qs(params: Record<string, string | number | undefined>) {
@@ -144,6 +172,11 @@ export const api = {
 
   // user
   me: () => apiFetch("/users/me"),
+  updateAvatar: (form: FormData) => apiFetchForm("/users/me/avatar", form),
+  requestWithdrawalPasswordOtp: () =>
+    apiFetch("/users/me/withdrawal-password/request-otp", { method: "POST" }),
+  setWithdrawalPassword: (newPassword: string, otp?: string) =>
+    apiFetch("/users/me/withdrawal-password", { method: "POST", body: { newPassword, ...(otp ? { otp } : {}) } }),
   updateMe: (body: { name?: string; mobile?: string }) =>
     apiFetch("/users/me", { method: "PATCH", body }),
   dashboard: () => apiFetch("/dashboard"),
@@ -163,14 +196,22 @@ export const api = {
     apiFetch(`/wallet/transactions${qs({ page, limit, type })}`),
 
   // withdrawals
-  createWithdrawal: (amount: number, destinationAddress: string, idempotencyKey?: string) =>
-    apiFetch("/withdrawals", { method: "POST", body: { amount, destinationAddress, idempotencyKey } }),
-  principalWithdrawal: (investmentId: string, destinationAddress: string) =>
-    apiFetch("/withdrawals/principal", { method: "POST", body: { investmentId, destinationAddress } }),
+  createWithdrawal: (amount: number, destinationAddress: string, idempotencyKey?: string, withdrawalPassword?: string) =>
+    apiFetch("/withdrawals", { method: "POST", body: { amount, destinationAddress, idempotencyKey, withdrawalPassword } }),
+  principalWithdrawal: (investmentId: string, destinationAddress: string, amount?: number, withdrawalPassword?: string) =>
+    apiFetch("/withdrawals/principal", { method: "POST", body: { investmentId, destinationAddress, withdrawalPassword, ...(amount ? { amount } : {}) } }),
   principalEligibility: (investmentId: string) =>
     apiFetch(`/withdrawals/principal/${investmentId}/eligibility`),
   withdrawals: (page = 1, limit = 10, status?: string) =>
     apiFetch(`/withdrawals${qs({ page, limit, status })}`),
+  submitClaimTx: (id: string, txHash?: string) =>
+    apiFetch(`/withdrawals/${id}/claim-tx`, { method: "POST", body: txHash ? { txHash } : {} }),
+  reissueVoucher: (id: string) =>
+    apiFetch(`/withdrawals/${id}/revoucher`, { method: "POST" }),
+
+  // kyc
+  kycMe: () => apiFetch("/kyc/me"),
+  kycSubmit: (form: FormData) => apiFetchForm("/kyc/submit", form),
 
   // referrals & roi
   referrals: (page = 1, limit = 10) => apiFetch(`/referrals${qs({ page, limit })}`),
@@ -244,6 +285,13 @@ export const api = {
     apiFetch(`/admin/investments/${id}/status`, { method: "PATCH", body: { status, remarks } }),
   adminWithdrawals: (page = 1, limit = 10, status?: string) =>
     apiFetch(`/admin/withdrawals${qs({ page, limit, status })}`),
+  adminPayoutTreasury: () => apiFetch("/admin/payout-treasury"),
+  adminKycList: (page = 1, limit = 20, status?: string) =>
+    apiFetch(`/kyc${qs({ page, limit, status })}`),
+  adminKycApprove: (id: string) =>
+    apiFetch(`/kyc/${id}/approve`, { method: "PATCH" }),
+  adminKycReject: (id: string, reason: string) =>
+    apiFetch(`/kyc/${id}/reject`, { method: "PATCH", body: { reason } }),
   adminApproveWithdrawal: (id: string, remarks?: string) =>
     apiFetch(`/admin/withdrawals/${id}/approve`, { method: "PATCH", body: { remarks } }),
   adminRejectWithdrawal: (id: string, reason: string) =>

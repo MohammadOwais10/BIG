@@ -71,12 +71,11 @@ export default function DashboardPage() {
           </div>
 
           {/* Row 2: income breakdown */}
-          <div className="mt-4 grid grid-cols-2 gap-4 lg:grid-cols-5">
+          <div className="mt-4 grid grid-cols-2 gap-4 lg:grid-cols-4">
             <StatCard label="Direct income (5%)" value={fmtUsd(data.totalDirectIncome)} />
             <StatCard label="Level income" value={fmtUsd(data.totalLevelIncome)} />
             <StatCard label="Rank rewards" value={fmtUsd(rewards?.totalEarned)} />
             <StatCard label="Withdrawn" value={fmtUsd(data.totalWithdrawal)} />
-            <StatCard label="Active investments" value={data.activeInvestments ?? 0} />
           </div>
 
           {/* Row 3: progress widgets */}

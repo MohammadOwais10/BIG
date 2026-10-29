@@ -7,12 +7,36 @@ import { useEffect, type ReactNode } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { Spinner } from "./ui";
 
+// Round profile photo — click opens the profile page
+function AvatarButton() {
+  const { user } = useAuth();
+  const router = useRouter();
+
+  return (
+    <button
+      onClick={() => router.push("/profile")}
+      title="My profile"
+      className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full border-2 border-[#24406E] bg-[#0A1226] transition hover:border-[#1255FF]"
+    >
+      {user?.avatarUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={user.avatarUrl} alt={user.name} className="h-full w-full object-cover" />
+      ) : (
+        <span className="flex h-full w-full items-center justify-center text-base font-bold text-[#7FA8FF]">
+          {user?.name?.[0]?.toUpperCase()}
+        </span>
+      )}
+    </button>
+  );
+}
+
 const userNav = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/deposit", label: "Deposit" },
   { href: "/invest", label: "Invest" },
   { href: "/wallet", label: "Wallet" },
   { href: "/withdraw", label: "Withdraw" },
+  { href: "/kyc", label: "KYC" },
   { href: "/team", label: "Team" },
   { href: "/rewards", label: "Rewards" },
   { href: "/roi", label: "ROI History" },
@@ -22,6 +46,7 @@ const userNav = [
 const adminNav = [
   { href: "/admin", label: "Overview" },
   { href: "/admin/users", label: "Users" },
+  { href: "/admin/kyc", label: "KYC" },
   { href: "/admin/investments", label: "Investments" },
   { href: "/admin/withdrawals", label: "Withdrawals" },
   { href: "/admin/deposits", label: "Deposits" },
@@ -87,9 +112,12 @@ export function AppShell({ children }: { children: ReactNode }) {
           {isAdmin ? adminNav.map(link) : userNav.map(link)}
         </nav>
         <div className="border-t border-[var(--line)] px-4 py-4">
-          <div className="mb-3 px-2">
-            <p className="truncate text-sm font-semibold text-[#E8EDFA]">{user.name}</p>
-            <p className="truncate text-xs text-[#5F7099]">{user.email}</p>
+          <div className="mb-3 flex items-center gap-3 px-2">
+            <AvatarButton />
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold text-[#E8EDFA]">{user.name}</p>
+              <p className="truncate text-xs text-[#5F7099]">{user.email}</p>
+            </div>
           </div>
           <button
             onClick={async () => {
@@ -108,15 +136,18 @@ export function AppShell({ children }: { children: ReactNode }) {
         <Link href={isAdmin ? "/admin" : "/dashboard"}>
           <Image src="/logo.png" alt="BIG" width={100} height={42} className="h-8 w-auto" />
         </Link>
-        <button
-          onClick={async () => {
-            await logout();
-            router.push("/login");
-          }}
-          className="rounded-lg border border-[#24406E] px-3 py-1.5 text-xs font-semibold text-[#9FB8EE]"
-        >
-          Sign out
-        </button>
+        <div className="flex items-center gap-2">
+          <AvatarButton />
+          <button
+            onClick={async () => {
+              await logout();
+              router.push("/login");
+            }}
+            className="rounded-lg border border-[#24406E] px-3 py-1.5 text-xs font-semibold text-[#9FB8EE]"
+          >
+            Sign out
+          </button>
+        </div>
       </header>
 
       {/* Mobile nav */}
@@ -136,7 +167,12 @@ export function AppShell({ children }: { children: ReactNode }) {
         ))}
       </nav>
 
-      <main className="px-4 py-8 lg:ml-64 lg:px-10">
+      {/* Desktop top-right avatar */}
+      <div className="fixed right-6 top-4 z-20 hidden lg:block">
+        <AvatarButton />
+      </div>
+
+      <main className="px-4 py-5 sm:py-8 lg:ml-64 lg:px-10">
         <div className="mx-auto max-w-6xl">{children}</div>
       </main>
     </div>

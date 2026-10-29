@@ -27,11 +27,26 @@ const ERC20_ABI = [
   },
 ] as const;
 
+const VAULT_ABI = [
+  {
+    type: "function",
+    name: "emergencyWithdraw",
+    stateMutability: "nonpayable",
+    inputs: [
+      { name: "to", type: "address" },
+      { name: "amount", type: "uint256" },
+    ],
+    outputs: [],
+  },
+] as const;
+
 export default function AdminWithdrawals() {
   const { open } = useAppKit();
-  const { isConnected } = useAppKitAccount();
+  const { isConnected, address } = useAppKitAccount();
   const { writeContract, data: payTxHash, isPending: sending, error: sendError } = useWriteContract();
   const { isLoading: confirming, isSuccess: mined } = useWaitForTransactionReceipt({ hash: payTxHash });
+  const { writeContract: writeSweep, data: sweepHash, isPending: sweepingEvm, error: sweepError } = useWriteContract();
+  const { isSuccess: sweepMined } = useWaitForTransactionReceipt({ hash: sweepHash });
 
   const [list, setList] = useState<any[]>([]);
   const [page, setPage] = useState(1);
@@ -43,14 +58,20 @@ export default function AdminWithdrawals() {
   const [paying, setPaying] = useState<any>(null);
   const [submittedHash, setSubmittedHash] = useState<string | null>(null);
   const [awaitingConnect, setAwaitingConnect] = useState<any>(null);
+  const [treasury, setTreasury] = useState<any>(null);
+  const [sweepingTron, setSweepingTron] = useState<string | null>(null);
   const toast = useToast();
 
   async function load() {
     setLoading(true);
     try {
-      const r = await api.adminWithdrawals(page, 15, status || undefined);
+      const [r, t] = await Promise.all([
+        api.adminWithdrawals(page, 15, status || undefined),
+        api.adminPayoutTreasury().catch(() => null),
+      ]);
       setList(r.data.withdrawals);
       setTotalPages(r.data.totalPages || 1);
+      if (t) setTreasury(t.data);
     } finally {
       setLoading(false);
     }
@@ -81,6 +102,47 @@ export default function AdminWithdrawals() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mined, payTxHash, paying]);
+
+  // Vault sweep — emergencyWithdraw pays the CONNECTED wallet (must be owner).
+  function sweepVault(v: any) {
+    if (v.network === "TRC20") {
+      sweepTronVault(v);
+      return;
+    }
+    if (!isConnected || !address) return open();
+    writeSweep({
+      address: v.contract as `0x${string}`,
+      abi: VAULT_ABI,
+      functionName: "emergencyWithdraw",
+      args: [address as `0x${string}`, parseUnits(String(v.balanceUsdt), USDT_DECIMALS)],
+    });
+  }
+
+  async function sweepTronVault(v: any) {
+    const tw = (window as any).tronWeb;
+    if (!tw?.ready) return toast("Connect TronLink first — must be the vault owner wallet", "error");
+    setSweepingTron(v.network);
+    try {
+      const to = tw.defaultAddress.base58;
+      const c = await tw.contract().at(v.contract);
+      const raw = BigInt(Math.round(Number(v.balanceUsdt) * 1e6));
+      const txid = await c.emergencyWithdraw(to, raw.toString()).send({ feeLimit: 50_000_000 });
+      toast(`Vault swept — ${fmtUsd(v.balanceUsdt)} USDT sent to ${to.slice(0, 12)}…`, "success");
+      setTimeout(load, 4000);
+    } catch (e: any) {
+      toast(e?.message || "Sweep failed — connected wallet must be the vault owner", "error");
+    } finally {
+      setSweepingTron(null);
+    }
+  }
+
+  useEffect(() => {
+    if (sweepMined && sweepHash) {
+      toast("Vault swept — USDT sent to your connected wallet", "success");
+      setTimeout(load, 2000);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sweepMined, sweepHash]);
 
   function startPay(w: any) {
     setPaying(w);
@@ -156,6 +218,42 @@ export default function AdminWithdrawals() {
           </div>
           <WalletConnect />
         </div>
+        {treasury?.autoClaimEnabled && (
+          <div className="mb-4 flex flex-wrap items-center gap-x-6 gap-y-2 rounded-xl border border-[#1C2C50] bg-[#0A1226]/60 px-4 py-3">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#8FA3CC]">
+              Payout vaults <span className="normal-case text-[#5F7099]">(auto-claim under ${treasury.autoClaimMaxUsd})</span>
+            </p>
+            {treasury.vaults.length === 0 && (
+              <p className="text-xs text-[#5F7099]">No payout contract configured yet</p>
+            )}
+            {treasury.vaults.map((v: any) => (
+              <div key={v.network} className="flex items-center gap-2">
+                <p className="text-xs text-[#CBD6EC]">
+                  {v.network}:{" "}
+                  <span className="font-semibold text-emerald-300">
+                    {v.balanceUsdt == null ? "—" : fmtUsd(v.balanceUsdt)}
+                  </span>{" "}
+                  <span className="text-[#5F7099]">USDT</span>
+                </p>
+                {v.contract && Number(v.balanceUsdt) > 0 && (
+                  <button
+                    onClick={() => sweepVault(v)}
+                    disabled={sweepingEvm || sweepingTron === v.network}
+                    className="rounded-md border border-amber-500/40 bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold text-amber-300 hover:bg-amber-500/20 disabled:opacity-50"
+                  >
+                    {sweepingEvm || sweepingTron === v.network ? "Sweeping…" : "Sweep"}
+                  </button>
+                )}
+              </div>
+            ))}
+            <p className="w-full text-[10px] text-[#5F7099]">
+              Sweep sends the whole vault balance to your connected wallet — must be the vault owner.
+            </p>
+            {sweepError && (
+              <p className="w-full text-[10px] text-red-300">{sweepError.message.split("\n")[0]}</p>
+            )}
+          </div>
+        )}
         {msg && (
           <p className={`mb-4 rounded-lg border px-4 py-2.5 text-sm ${msg.ok ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300" : "border-red-500/30 bg-red-500/10 text-red-300"}`}>
             {msg.text}

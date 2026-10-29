@@ -18,6 +18,10 @@ export interface SessionUser {
   role: "ADMIN" | "USER";
   referralCode: string;
   status: string;
+  avatarUrl?: string | null;
+  hasWithdrawalPassword?: boolean;
+  withdrawalPasswordSetAt?: string | null;
+  withdrawalPasswordUnlockAt?: string | null;
 }
 
 interface AuthState {

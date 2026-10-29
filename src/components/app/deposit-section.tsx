@@ -60,6 +60,8 @@ export function DepositCard({
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [tronReady, setTronReady] = useState(false);
+  const [tronBusy, setTronBusy] = useState(false);
   const toast = useToast();
 
   useEffect(() => setConfig(initialConfig), [initialConfig]);
@@ -72,6 +74,13 @@ export function DepositCard({
   const isTron = network === "TRC20";
   const networks = config?.availableNetworks ?? [];
 
+  // TronLink exposes window.tronWeb once connected
+  useEffect(() => {
+    if (!isTron) return;
+    const tw = (window as any).tronWeb;
+    setTronReady(Boolean(tw?.ready && tw.defaultAddress?.base58));
+  }, [isTron]);
+
   useEffect(() => {
     if (mined && txHash && !submitted) {
       setSubmitted(true);
@@ -80,9 +89,15 @@ export function DepositCard({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mined, txHash]);
 
-  async function submitHash(hash: string) {
+  async function submitHash(hash: string, attempt = 0) {
     try {
       const r = await api.submitDeposit(hash, network);
+      if (r.data.duplicate) {
+        setMsg({ ok: true, text: "This transaction was already verified earlier — it can only be credited once." });
+        toast("Already used — this deposit was credited before", "info");
+        onCredited?.();
+        return;
+      }
       const invested = Boolean(r.data.investment);
       const credited = r.data.deposit.status === "CREDITED";
       setMsg({
@@ -104,6 +119,11 @@ export function DepositCard({
       onCredited?.();
     } catch (e) {
       const text = e instanceof ApiError ? e.message : "Submission failed";
+      // Fresh chain tx needs a few seconds to reach the indexer — retry.
+      if (attempt < 6 && /not found|on Tron|on-chain/i.test(text)) {
+        await new Promise((r) => setTimeout(r, 3000));
+        return submitHash(hash, attempt + 1);
+      }
       setMsg({ ok: false, text });
       toast(text, "error");
     }
@@ -119,6 +139,41 @@ export function DepositCard({
       functionName: "transfer",
       args: [depositWallet, parseUnits(amount || "0", USDT_DECIMALS)],
     });
+  }
+
+  async function connectTron() {
+    const tl = (window as any).tronLink;
+    if (!tl) {
+      toast("TronLink not detected — install the TronLink extension", "error");
+      return;
+    }
+    try {
+      await tl.request({ method: "tron_requestAccounts" });
+      setTronReady(Boolean((window as any).tronWeb?.ready));
+    } catch {
+      toast("TronLink connection rejected", "error");
+    }
+  }
+
+  async function sendTron(e: React.FormEvent) {
+    e.preventDefault();
+    const tw = (window as any).tronWeb;
+    if (!tw?.ready) return toast("Connect TronLink first", "error");
+    if (!config?.contract) return toast("TRC20 USDT is not configured", "error");
+    setTronBusy(true);
+    setMsg(null);
+    try {
+      const c = await tw.contract().at(config.contract);
+      const raw = Math.round(Number(amount || "0") * 10 ** (config.usdtDecimals ?? 6));
+      const txid = await c.transfer(depositWallet, raw).send({ feeLimit: 15_000_000 });
+      await submitHash(txid);
+    } catch (err: any) {
+      const text = err?.message || "Tron send failed";
+      setMsg({ ok: false, text });
+      toast(text, "error");
+    } finally {
+      setTronBusy(false);
+    }
   }
 
   return (
@@ -169,8 +224,7 @@ export function DepositCard({
           </button>
           {isTron && (
             <p className="mt-2 text-[10px] leading-relaxed text-[#5F7099]">
-              Send from TronLink, Binance or any exchange — select <b>USDT-TRC20</b>. Then paste
-              your transaction hash below.
+              Or send from Binance/any exchange — select <b>USDT-TRC20</b>, then paste your tx hash below.
             </p>
           )}
         </div>
@@ -219,6 +273,55 @@ export function DepositCard({
             </button>
           </form>
         ))}
+
+      {isTron && depositWallet && (
+        <form onSubmit={sendTron} className="space-y-4">
+          {!tronReady ? (
+            <>
+              <p className="text-sm text-[#8FA3CC]">
+                Connect TronLink to deposit USDT — or send directly to the address above and paste
+                your tx hash below.
+              </p>
+              <button type="button" onClick={connectTron} className={`${btnPrimary} w-full`}>
+                Connect TronLink
+              </button>
+            </>
+          ) : (
+            <>
+              <div className="flex items-center justify-between gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2">
+                <p className="font-mono text-[10px] text-emerald-300">
+                  TronLink: {(window as any).tronWeb?.defaultAddress?.base58}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setTronReady(false);
+                    toast("Disconnected — switch account in TronLink then connect again", "info");
+                  }}
+                  className="text-[10px] font-semibold uppercase tracking-wider text-[#8FA3CC] hover:text-red-300"
+                >
+                  Disconnect
+                </button>
+              </div>
+              <Field label="Amount (USDT)" hint="Deposits of $100 or more are invested automatically">
+                <input
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  className={inputCls}
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  placeholder="100.00"
+                  required
+                />
+              </Field>
+              <button type="submit" disabled={tronBusy || !amount} className={`${btnPrimary} w-full`}>
+                {tronBusy ? "Confirm in TronLink…" : `Send ${amount || "0"} USDT`}
+              </button>
+            </>
+          )}
+        </form>
+      )}
 
       {sendError && (
         <p className="mt-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-2.5 text-xs text-red-300">

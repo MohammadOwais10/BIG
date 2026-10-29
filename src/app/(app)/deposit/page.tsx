@@ -100,15 +100,27 @@ export default function DepositPage() {
                       {fmtDate(d.createdAt)} · {d.confirmations}/{config?.requiredConfirmations ?? 12} confirmations
                     </p>
                     <p className="mt-0.5">
-                      <Copyable value={d.txHash} />
-                      <a
-                        href={`https://testnet.bscscan.com/tx/${d.txHash}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="ml-1.5 font-mono text-[10px] text-emerald-300 hover:underline"
-                      >
-                        ↗
-                      </a>
+                      {(() => {
+                        const isTron = d.network === "TRC20" || d.txHash?.startsWith("trc20:");
+                        const rawHash = (d.txHash ?? "").replace(/^trc20:/, "");
+                        return (
+                          <>
+                            <Copyable value={rawHash} />
+                            <a
+                              href={
+                                isTron
+                                  ? `https://nile.tronscan.org/#/transaction/${rawHash}`
+                                  : `https://testnet.bscscan.com/tx/${rawHash}`
+                              }
+                              target="_blank"
+                              rel="noreferrer"
+                              className="ml-1.5 font-mono text-[10px] text-emerald-300 hover:underline"
+                            >
+                              ↗
+                            </a>
+                          </>
+                        );
+                      })()}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">

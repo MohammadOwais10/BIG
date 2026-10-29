@@ -96,21 +96,37 @@ export default function TeamPage() {
         <StatCard label="Level income" value={fmtUsd(commStats?.totalLevelIncome)} />
       </div>
 
+      {/* Share link — the main action on this page */}
+      <Card title="Invite & earn" className="mt-6">
+        <div className="flex flex-wrap items-center gap-3">
+          <code className="break-all rounded-xl border border-[#24406E] bg-[#0A1226] px-4 py-2.5 font-mono text-xs text-[#7FA8FF]">
+            {typeof window !== "undefined"
+              ? `${window.location.origin}/register?ref=${user?.referralCode}`
+              : `…/register?ref=${user?.referralCode}`}
+          </code>
+          <button
+            className={btnGhost}
+            onClick={() => {
+              navigator.clipboard?.writeText(
+                `${window.location.origin}/register?ref=${user?.referralCode}`
+              );
+              setCopied(true);
+              setTimeout(() => setCopied(false), 1500);
+            }}
+          >
+            {copied ? "Copied!" : "Copy link"}
+          </button>
+        </div>
+        <p className="mt-2 text-xs text-[#5F7099]">5% on every direct referral&apos;s investment + level income up to 20 levels.</p>
+      </Card>
+
       {/* Level unlock progress */}
       {stats?.levelUnlocks && (
         <Card
-          title="Level income unlocks"
-          subtitle={`${stats.unlockedLevels}/20 levels unlocked — levels open sequentially`}
+          title="Level income"
+          subtitle={`${stats.unlockedLevels}/20 levels unlocked`}
           className="mt-6"
         >
-          <p className="mb-3 rounded-lg border border-[#1C2C50] bg-[#0A1226]/60 px-3 py-2 text-[11px] leading-relaxed text-[#8FA3CC]">
-            You earn a % of your downline&apos;s daily ROI up to 20 levels. A level unlocks only
-            when <span className="text-[#E8EDFA]">every member of the previous level</span> meets
-            the direct-referral rule: <span className="text-emerald-300">2 active directs</span> for
-            levels 1–5, <span className="text-emerald-300">1 active direct</span> for levels 6–20.
-            &quot;Active&quot; means the member has a live investment — registered-only or
-            fully-withdrawn members don&apos;t count. One unqualified member locks everything below.
-          </p>
           <div className="grid grid-cols-4 gap-2 sm:grid-cols-5 lg:grid-cols-10">
             {stats.levelUnlocks.map((l: any) => (
               <div
@@ -131,7 +147,7 @@ export default function TeamPage() {
                 <p className="text-[9px] text-[#5F7099]">
                   {l.unlocked
                     ? `${l.qualifiedMembers}/${l.members} members`
-                    : `${l.requiredDirects} directs/member`}
+                    : `${l.requiredDirects}/member`}
                 </p>
               </div>
             ))}
@@ -140,16 +156,25 @@ export default function TeamPage() {
             const next = stats.levelUnlocks.find((l: any) => !l.unlocked);
             return next?.lockReason ? (
               <p className="mt-3 text-xs text-amber-300/90">
-                Next blocker: {next.lockReason} — Level {next.level} stays locked until then.
+                To unlock L{next.level}: {next.lockReason}
               </p>
             ) : null;
           })()}
+          <details className="mt-3 text-[10px] text-[#5F7099]">
+            <summary className="cursor-pointer hover:text-[#8FA3CC]">How level income works</summary>
+            <p className="mt-1 rounded-lg border border-[#1C2C50] bg-[#0A1226]/60 px-3 py-2 text-[11px] leading-relaxed text-[#8FA3CC]">
+              You earn a % of your downline&apos;s daily ROI up to 20 levels. A level opens only
+              when every member of the previous level meets the direct-referral rule: 2 active
+              directs (levels 1–5) or 1 active direct (levels 6–20). &quot;Active&quot; means the
+              member has a live investment — one unqualified member locks everything below.
+            </p>
+          </details>
         </Card>
       )}
 
       <Card
         title="Referral tree"
-        subtitle="Your full downline — click − / + to collapse or expand a branch"
+        subtitle="Click − / + to expand a branch"
         className="mt-6"
       >
         {!tree ? (
@@ -160,27 +185,16 @@ export default function TeamPage() {
             hint="Share your referral code — your team will grow here level by level"
           />
         ) : (
-          <>
-            <p className="mb-3 flex flex-wrap gap-4 rounded-lg border border-[#1C2C50] bg-[#0A1226]/60 px-3 py-2 text-[11px] text-[#8FA3CC]">
-              <span>
-                <span className="mr-1 inline-block h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                active investor (earning ROI)
-              </span>
-              <span>L# = level depth under you</span>
-              <span>invested = member&apos;s own investment</span>
-              <span>active direct = member with money invested (counts for ranks &amp; level unlocks)</span>
-            </p>
-            <div className="max-h-[560px] overflow-auto pr-2">
-              <div className="mb-2 inline-flex items-center gap-3 rounded-xl border border-[#1255FF]/50 bg-[#1255FF]/10 px-4 py-2">
-                <p className="text-sm font-semibold text-[#7FA8FF]">{tree.name} (you)</p>
-              </div>
-              <ul className="ml-2 space-y-2">
-                {tree.children.map((c: any) => (
-                  <TreeNode key={c.id} node={c} />
-                ))}
-              </ul>
+          <div className="max-h-[560px] overflow-auto pr-2">
+            <div className="mb-2 inline-flex items-center gap-3 rounded-xl border border-[#1255FF]/50 bg-[#1255FF]/10 px-4 py-2">
+              <p className="text-sm font-semibold text-[#7FA8FF]">{tree.name} (you)</p>
             </div>
-          </>
+            <ul className="ml-2 space-y-2">
+              {tree.children.map((c: any) => (
+                <TreeNode key={c.id} node={c} />
+              ))}
+            </ul>
+          </div>
         )}
       </Card>
 
@@ -227,34 +241,6 @@ export default function TeamPage() {
         </Card>
       </div>
 
-      <Card title="Share your referral link" className="mt-6">
-        <div className="mb-3 flex flex-wrap items-center gap-3">
-          <code className="break-all rounded-xl border border-[#24406E] bg-[#0A1226] px-4 py-2.5 font-mono text-xs text-[#7FA8FF]">
-            {typeof window !== "undefined"
-              ? `${window.location.origin}/register?ref=${user?.referralCode}`
-              : `…/register?ref=${user?.referralCode}`}
-          </code>
-          <button
-            className={btnGhost}
-            onClick={() => {
-              navigator.clipboard?.writeText(
-                `${window.location.origin}/register?ref=${user?.referralCode}`
-              );
-              setCopied(true);
-              setTimeout(() => setCopied(false), 1500);
-            }}
-          >
-            {copied ? "Copied!" : "Copy link"}
-          </button>
-          <code className="rounded-xl border border-[#1C2C50] bg-[#0A1226]/60 px-3 py-1.5 font-mono text-xs text-[#5F7099]">
-            code: {user?.referralCode}
-          </code>
-          <p className="text-xs text-[#5F7099]">
-            You earn 5% on every direct referral investment, plus level income up to 20 levels —
-            each member in the chain needs 2 active directs (levels 1–5) or 1 direct (levels 6–20).
-          </p>
-        </div>
-      </Card>
     </>
   );
 }

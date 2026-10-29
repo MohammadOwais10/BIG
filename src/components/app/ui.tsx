@@ -189,7 +189,7 @@ export function Copyable({ value, label }: { value: string; label?: string }) {
 }
 
 export const inputCls =
-  "w-full rounded-xl border border-[#24406E] bg-[#0A1226] px-4 py-2.5 text-sm text-[#E8EDFA] outline-none transition placeholder:text-[#45567E] focus:border-[#1255FF] focus:ring-2 focus:ring-[#1255FF]/25";
+  "w-full rounded-xl border border-[#24406E] bg-[#0A1226] px-4 py-2.5 text-base text-[#E8EDFA] outline-none transition placeholder:text-[#45567E] focus:border-[#1255FF] focus:ring-2 focus:ring-[#1255FF]/25 sm:text-sm";
 
 export const btnPrimary =
   "blue-border relative overflow-hidden rounded-xl px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.16em] text-[#7FA8FF] transition hover:shadow-[0_0_40px_rgba(18,85,255,0.3)] disabled:opacity-50";
