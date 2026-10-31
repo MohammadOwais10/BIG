@@ -120,16 +120,6 @@ export function InvestmentSection() {
           </div>
         </Reveal>
 
-        <Reveal delay={0.14}>
-          <div className="mt-10 overflow-hidden rounded-2xl border border-[rgba(255,99,110,0.28)] bg-[rgba(255,99,110,0.05)] px-6 py-5 md:px-8">
-            <p className="panel-label" style={{ color: "#FF9AA2" }}>
-              Important Information
-            </p>
-            <p className="mt-3 text-sm leading-relaxed text-[#BCC7DF]">
-              {packageTerms.disclaimer}
-            </p>
-          </div>
-        </Reveal>
       </div>
     </section>
   );

@@ -2,8 +2,6 @@ import { earnings } from "@/lib/content";
 import { Reveal } from "@/components/reveal";
 
 export function EarningsSection() {
-  const max = Math.max(...earnings.ladder.rows.map((row) => row.rate));
-
   return (
     <section
       id="earnings"
@@ -76,69 +74,6 @@ export function EarningsSection() {
             </Reveal>
           ))}
         </div>
-
-        <Reveal delay={0.08}>
-          <section id="levels" className="panel-glass mt-8 overflow-hidden rounded-3xl">
-            <div className="surface-head px-7 py-6 md:px-9">
-              <p className="panel-label">{earnings.ladder.eyebrow}</p>
-              <h3 className="mt-3 font-display text-2xl text-white md:text-3xl">
-                {earnings.ladder.title}
-              </h3>
-              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[#93A7DE]">
-                {earnings.ladder.subtitle}
-              </p>
-            </div>
-
-            <div className="px-7 py-7 md:px-9">
-              <div className="panel-label-muted hidden grid-cols-[9rem_1fr_6rem] gap-6 pb-4 md:grid">
-                <span>Level</span>
-                <span>Reward as a percentage of ROI</span>
-                <span className="text-right">Rate</span>
-              </div>
-
-              <div className="space-y-3">
-                {earnings.ladder.rows.map((row) => (
-                  <div
-                    key={row.level}
-                    className="grid items-center gap-3 rounded-2xl border border-[var(--line)] bg-[#070D1E]/70 px-5 py-4 md:grid-cols-[9rem_1fr_6rem] md:gap-6"
-                  >
-                    <div>
-                      <p className="font-display text-base text-white">
-                        {row.level}
-                      </p>
-                      <p className="mt-1 text-[10px] leading-snug text-[#8A99C4]">
-                        {row.label}
-                      </p>
-                      <p className="mt-1.5 inline-block rounded-full bg-[rgba(127,168,255,0.12)] px-2.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-[var(--blue-soft)]">
-                        {row.requirement}
-                      </p>
-                    </div>
-
-                    <div className="h-2.5 overflow-hidden rounded-full bg-[#0B1732]">
-                      <div
-                        className="h-full rounded-full bg-[linear-gradient(90deg,#1255FF,#7FA8FF)]"
-                        style={{ width: `${(row.rate / max) * 100}%` }}
-                      />
-                    </div>
-
-                    <div className="md:text-right">
-                      <span className="micro-label block md:hidden">
-                        Reward
-                      </span>
-                      <p className="font-display text-xl leading-none text-[var(--blue-soft)]">
-                        {row.rate}%
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <p className="border-t border-[var(--line)] bg-[#050A16] px-7 py-4 text-[11px] leading-relaxed text-[#8090B4] md:px-9">
-              {earnings.ladder.footerNote}
-            </p>
-          </section>
-        </Reveal>
       </div>
     </section>
   );

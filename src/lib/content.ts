@@ -20,38 +20,6 @@ export const hero = {
   ],
 };
 
-export const businessModel = {
-  eyebrow: "Business Model",
-  title: "Changing the Way People Think About Trading",
-  intro:
-    "BIG aims to make trading accessible to everyone by simplifying the trading journey and managing trading activities on behalf of its users, so you don’t need to be an expert trader to get started. One platform. Two roles.",
-  panels: [
-    {
-      index: "01",
-      eyebrow: "Our Trading Model",
-      title: "Capital deployed in the company's trading operations",
-      body:
-        "Funds received through eligible participation in our programs are utilized as part of the company's trading operations, including Forex market activities.",
-      points: [
-        "Our trading team and technology infrastructure are responsible for managing the trading activities.",
-        "Activities are conducted according to the company's defined strategies, risk-management procedures, and operational policies.",
-        "A published set of strategy families is used, from discretionary approaches to AI-assisted execution — listed under Trading View below.",
-      ],
-    },
-    {
-      index: "02",
-      eyebrow: "Our Partner Network",
-      title: "Partners expand the community through referrals",
-      body:
-        "Participants may also have the opportunity to become partners and introduce new participants to the platform.",
-      points: [
-        "Our compensation plan provides defined rewards for qualifying promotional and network activity.",
-        "Commissions are subject to the applicable qualification criteria and terms.",
-      ],
-    },
-  ],
-};
-
 export const packageTerms = {
   eyebrow: "Investment Package",
   title: "One package. A published plan.",
@@ -135,22 +103,11 @@ export const packageTerms = {
       state: "topup",
     },
   ],
-  disclaimer:
-    "ROI and rewards are not guaranteed and may be subject to market risk, fees, eligibility conditions, and applicable laws. Review the complete terms, withdrawal rules, and the legal/regulatory status of the operator before investing. Do not invest money you cannot afford to lose.",
 };
 
 export const tradingView = {
   eyebrow: "Trading View",
   title: "The market behind every return.",
-  intro:
-    "Every figure published on this page begins on a chart like this one. BeInGroup deploys capital through structured Forex trading, managed by our trading team and technology infrastructure under defined strategies and risk-management procedures.",
-  strategies: [
-    "Scalping",
-    "Hedging",
-    "Smart Money",
-    "Investing",
-    "AI Trading",
-  ],
   chart: {
     symbol: "EUR/USD",
     market: "Forex · Spot",
@@ -242,24 +199,6 @@ export const earnings = {
       ],
     },
   ],
-  ladder: {
-    eyebrow: "Level Unlocking & ROI Rewards",
-    title: "Reward per level, and what unlocks it",
-    subtitle:
-      "Each reward is a percentage of the ROI generated in your network. Levels 1–5 each require 2 direct referrals to unlock; levels 6–20 each require 1 direct referral.",
-    rows: [
-      { level: "Promoter / You", rate: 12, label: "Your personal ROI (top of 10%–12%)", requirement: "—" },
-      { level: "Level 1", rate: 20, label: "Your direct referral", requirement: "2 direct referrals" },
-      { level: "Level 2", rate: 10, label: "Second generation", requirement: "2 direct referrals" },
-      { level: "Level 3", rate: 7.5, label: "Third generation", requirement: "2 direct referrals" },
-      { level: "Level 4", rate: 5, label: "Fourth generation", requirement: "2 direct referrals" },
-      { level: "Level 5", rate: 2.5, label: "Fifth generation", requirement: "2 direct referrals" },
-      { level: "Level 6 – 10", rate: 1, label: "Sixth to tenth generation", requirement: "1 direct referral each" },
-      { level: "Level 11 – 20", rate: 0.5, label: "Eleventh to twentieth generation", requirement: "1 direct referral each" },
-    ],
-    footerNote:
-      "Level rewards accrue only while the network member remains active and generating ROI.",
-  },
 };
 
 export const forexRisk = {
@@ -305,74 +244,6 @@ export const forexRisk = {
         "A trading strategy, trader or program may perform well in one period and poorly in another. Previous trading results should not be treated as a guarantee of future performance.",
     },
   ],
-};
-
-export const workedExample = {
-  eyebrow: "Worked Example",
-  title: "How the money actually moves.",
-  intro:
-    "The example below follows three members from investment through network income. It uses 100 USD investments and 10 USD of ROI per member so every figure is easy to verify.",
-  assumptions: [
-    { k: "Investment per member", v: "100 USD" },
-    { k: "ROI per member", v: "10 USD" },
-    { k: "Direct commission", v: "5%" },
-  ],
-  unlockNote:
-    "Level rewards are shown as if each level's direct-referral requirement is already met — Level 1 requires 2 direct referrals, Level 2 requires 2 direct referrals. Under the plan, a level starts paying only once its requirement is met.",
-  steps: [
-    {
-      index: "01",
-      tag: "Step 1",
-      title: "Direct Income",
-      summary: "The referral commission is paid on investment, instantly.",
-      lines: [
-        { text: "Member A joins and invests 100 USD.", tone: "plain" },
-        { text: "Member A refers Member B.", tone: "plain" },
-        {
-          text: "Member B invests 100 USD → Member A receives 5% direct commission = 5 USD.",
-          tone: "highlight",
-        },
-      ],
-    },
-    {
-      index: "02",
-      tag: "Step 2",
-      title: "Level Income",
-      summary: "Level rewards are paid as a percentage of the ROI generated below you.",
-      lines: [
-        { text: "Member B generates 10 USD of ROI.", tone: "plain" },
-        {
-          text: "Member A sits at Level 1 to Member B → 20% of 10 USD = 2 USD.",
-          tone: "highlight",
-        },
-        { text: "Member B refers Member C and earns 20% of C's ROI at Level 1.", tone: "plain" },
-        {
-          text: "Member A moves to Level 2 to Member C → 10% of 10 USD = 1 USD.",
-          tone: "highlight",
-        },
-        { text: "This continues down the network for 20 levels.", tone: "plain" },
-      ],
-    },
-  ],
-  tree: {
-    members: [
-      { id: "A", label: "Member A", role: "Top of this example", invested: "100 USD", earned: "8 USD", tone: "root" },
-      { id: "B", label: "Member B", role: "Referred by A · Level 1", invested: "100 USD", earned: "7 USD", tone: "mid" },
-      { id: "C", label: "Member C", role: "Referred by B · Level 2 from A", invested: "100 USD", earned: "0 USD", tone: "leaf" },
-    ],
-    flows: [
-      { from: "B", to: "A", kind: "direct", label: "Direct 5%", amount: "5 USD" },
-      { from: "B", to: "A", kind: "level", label: "L1 · 20%", amount: "2 USD" },
-      { from: "C", to: "B", kind: "direct", label: "Direct 5%", amount: "5 USD" },
-      { from: "C", to: "B", kind: "level", label: "L1 · 20%", amount: "2 USD" },
-      { from: "C", to: "A", kind: "level", label: "L2 · 10%", amount: "1 USD" },
-    ],
-    summary: [
-      { k: "Member A", v: "5 USD direct + 2 USD (L1) + 1 USD (L2) = 8 USD" },
-      { k: "Member B", v: "5 USD direct + 2 USD (L1) = 7 USD" },
-      { k: "Member C", v: "New join — 5 USD paid to Member B on investment" },
-    ],
-  },
 };
 
 export const gettingStarted = {
@@ -446,30 +317,6 @@ export const principles = {
   ],
 };
 
-export const leadership = [
-  {
-    name: "Trading Operations",
-    role: "Platform Performance",
-    focus: "Live Trading",
-    experience: "Accountable for trade income",
-    bio: "Runs the trading schedule that generates the ROI, and signs off on the performance figure used for every payout.",
-  },
-  {
-    name: "Member Operations",
-    role: "Onboarding & Support",
-    focus: "Members",
-    experience: "Accountable for requests and withdrawals",
-    bio: "Handles registration, funding, and withdrawal requests end to end, and reports each request against the published timelines.",
-  },
-  {
-    name: "Compliance & Reporting",
-    role: "Terms & Governance",
-    focus: "Transparency",
-    experience: "Accountable for published terms",
-    bio: "Keeps the published rates, fees, and caps accurate, and documents every change before it applies to a member.",
-  },
-];
-
 export const corporate = {
   eyebrow: "Corporate Information",
   title: "Registered, published, and open to verification.",
@@ -506,7 +353,6 @@ export const corporate = {
 };
 
 export const navLinks = [
-  { href: "#model", label: "Model" },
   { href: "#package", label: "Package" },
   { href: "#trading", label: "Trading" },
   { href: "#earnings", label: "Earnings" },
@@ -514,15 +360,10 @@ export const navLinks = [
 ] as const;
 
 export const footerLinks = [
-  { href: "#model", label: "Business Model" },
   { href: "#package", label: "Package" },
   { href: "#trading", label: "Trading View" },
   { href: "#earnings", label: "Earnings" },
   { href: "#withdrawal", label: "Withdrawal" },
-  { href: "#levels", label: "Levels" },
-  { href: "#example", label: "Worked Example" },
   { href: "#risk", label: "Forex Risk" },
   { href: "#mission", label: "Mission" },
-  { href: "#leadership", label: "Leadership" },
-  { href: "#corporate", label: "Company" },
 ] as const;

@@ -17,24 +17,9 @@ export function TradingViewSection() {
             <h2 className="mt-4 font-display text-4xl leading-[1.02] tracking-tight text-white md:text-5xl">
               {tradingView.title}
             </h2>
-            <p className="mt-6 text-base leading-relaxed text-[#BCC7DF]">
-              {tradingView.intro}
-            </p>
           </Reveal>
 
-          <Reveal delay={0.1}>
-            <p className="panel-label">Deployed Strategies</p>
-            <ul className="mt-4 flex flex-wrap gap-2 lg:justify-end">
-              {tradingView.strategies.map((strategy) => (
-                <li
-                  key={strategy}
-                  className="rounded-full border border-[rgba(127,168,255,0.24)] bg-[rgba(18,85,255,0.12)] px-4 py-1.5 text-[12px] font-medium text-[#DCE6FF]"
-                >
-                  {strategy}
-                </li>
-              ))}
-            </ul>
-          </Reveal>
+
         </div>
 
         <Reveal delay={0.14} className="mt-12">
