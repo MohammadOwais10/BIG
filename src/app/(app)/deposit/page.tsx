@@ -5,7 +5,7 @@ import { api, fmtUsd, fmtDate, ApiError } from "@/lib/api";
 import { useToast } from "@/components/app/toast";
 import { PageHeader } from "@/components/app/app-shell";
 import { Card, Badge, Spinner, EmptyState, Copyable, btnGhost } from "@/components/app/ui";
-import { DepositCard, useDepositConfig } from "@/components/app/deposit-section";
+import { DepositCard, ManualDepositCard, useDepositConfig } from "@/components/app/deposit-section";
 
 export default function DepositPage() {
   const config = useDepositConfig();
@@ -76,6 +76,9 @@ export default function DepositPage() {
       <div className="grid gap-6 lg:grid-cols-2">
         <div>
           <DepositCard config={config} onCredited={load} />
+          <div className="mt-6">
+            <ManualDepositCard onCredited={load} />
+          </div>
           {msg && (
             <p className={`mt-4 rounded-lg border px-4 py-2.5 text-sm ${msg.ok ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300" : "border-red-500/30 bg-red-500/10 text-red-300"}`}>
               {msg.text}

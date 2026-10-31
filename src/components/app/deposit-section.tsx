@@ -1,5 +1,6 @@
 "use client";
 
+import QRCode from "qrcode";
 import { useEffect, useState } from "react";
 import { useAppKit, useAppKitAccount } from "@reown/appkit/react";
 import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
@@ -33,6 +34,20 @@ function hashValid(hash: string, network: string) {
   return network === "TRC20" ? /^[0-9a-fA-F]{64}$/.test(h) : /^0x[0-9a-fA-F]{64}$/.test(h);
 }
 
+// Fresh chain txs take a few seconds to reach the indexer — retry before failing.
+async function submitWithRetry(hash: string, network: string, attempt = 0): Promise<any> {
+  try {
+    return await api.submitDeposit(hash, network);
+  } catch (e) {
+    const text = e instanceof ApiError ? e.message : "";
+    if (attempt < 6 && /not found|on Tron|on-chain/i.test(text)) {
+      await new Promise((r) => setTimeout(r, 3000));
+      return submitWithRetry(hash, network, attempt + 1);
+    }
+    throw e;
+  }
+}
+
 export function useDepositConfig() {
   const [config, setConfig] = useState<any>(null);
   useEffect(() => {
@@ -56,7 +71,6 @@ export function DepositCard({
   const [network, setNetwork] = useState("BEP20");
   const [config, setConfig] = useState<any>(initialConfig);
   const [amount, setAmount] = useState("");
-  const [manualHash, setManualHash] = useState("");
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -89,9 +103,9 @@ export function DepositCard({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mined, txHash]);
 
-  async function submitHash(hash: string, attempt = 0) {
+  async function submitHash(hash: string) {
     try {
-      const r = await api.submitDeposit(hash, network);
+      const r = await submitWithRetry(hash, network);
       if (r.data.duplicate) {
         setMsg({ ok: true, text: "This transaction was already verified earlier — it can only be credited once." });
         toast("Already used — this deposit was credited before", "info");
@@ -119,11 +133,6 @@ export function DepositCard({
       onCredited?.();
     } catch (e) {
       const text = e instanceof ApiError ? e.message : "Submission failed";
-      // Fresh chain tx needs a few seconds to reach the indexer — retry.
-      if (attempt < 6 && /not found|on Tron|on-chain/i.test(text)) {
-        await new Promise((r) => setTimeout(r, 3000));
-        return submitHash(hash, attempt + 1);
-      }
       setMsg({ ok: false, text });
       toast(text, "error");
     }
@@ -336,27 +345,177 @@ export function DepositCard({
       {txHash && !isTron && (
         <p className="mt-3 break-all font-mono text-[10px] text-[#5F7099]">tx: {txHash}</p>
       )}
+    </Card>
+  );
+}
 
-      <div className="mt-6 border-t border-[#16233F] pt-5">
-        <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#8FA3CC]">
-          Already sent? Paste {network} tx hash
+export function ManualDepositCard({ onCredited }: { onCredited?: () => void }) {
+  const [network, setNetwork] = useState("BEP20");
+  const [config, setConfig] = useState<any>(null);
+  const [qr, setQr] = useState("");
+  const [hash, setHash] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const toast = useToast();
+  const isTron = network === "TRC20";
+
+  useEffect(() => {
+    api.depositConfig(network).then((r) => setConfig(r.data)).catch(() => {});
+  }, [network]);
+
+  const depositWallet = (config?.depositWallet || "") as string;
+  const networks = config?.availableNetworks ?? [];
+
+  useEffect(() => {
+    if (!depositWallet) {
+      setQr("");
+      return;
+    }
+    QRCode.toDataURL(depositWallet, {
+      width: 220,
+      margin: 0,
+      color: { dark: "#0A1226", light: "#FFFFFF" },
+    })
+      .then(setQr)
+      .catch(() => setQr(""));
+  }, [depositWallet]);
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    const h = hash.trim();
+    if (!hashValid(h, network)) {
+      toast("Invalid tx hash for this network", "error");
+      return;
+    }
+    setBusy(true);
+    setMsg(null);
+    try {
+      const r = await submitWithRetry(h, network);
+      if (r.data.duplicate) {
+        setMsg({ ok: true, text: "This transaction was already verified earlier — it can only be credited once." });
+        toast("Already used — this deposit was credited before", "info");
+        onCredited?.();
+        return;
+      }
+      const invested = Boolean(r.data.investment);
+      const credited = r.data.deposit.status === "CREDITED";
+      setMsg({
+        ok: true,
+        text: invested
+          ? "Deposit confirmed — automatically invested (min $100)."
+          : credited
+            ? "Deposit confirmed — credited to your wallet (below min investment)."
+            : `Deposit recorded. Awaiting ${config?.requiredConfirmations ?? 12} confirmations — auto-invest will happen shortly.`,
+      });
+      toast(
+        invested
+          ? `Deposit of ${r.data.deposit.amount} USDT confirmed — auto-invested`
+          : credited
+            ? `Deposit of ${r.data.deposit.amount} USDT confirmed — wallet credited`
+            : "Deposit submitted — will auto-invest after confirmations",
+        credited ? "success" : "info"
+      );
+      setHash("");
+      onCredited?.();
+    } catch (e) {
+      const text = e instanceof ApiError ? e.message : "Submission failed";
+      setMsg({ ok: false, text });
+      toast(text, "error");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <Card
+      title="Manual deposit"
+      subtitle="Send from an exchange or another wallet — then paste the tx hash"
+    >
+      {networks.length > 0 && (
+        <div className="mb-4 grid grid-cols-2 gap-2">
+          {networks.map((n: any) => (
+            <button
+              key={n.code}
+              type="button"
+              disabled={!n.enabled}
+              onClick={() => { setNetwork(n.code); setMsg(null); }}
+              className={`rounded-xl border px-3 py-2.5 text-xs font-semibold transition ${
+                network === n.code
+                  ? "border-[#1255FF] bg-[#1255FF]/15 text-[#7FA8FF]"
+                  : n.enabled
+                    ? "border-[#1C2C50] text-[#8FA3CC] hover:border-[#24406E]"
+                    : "cursor-not-allowed border-[#1C2C50] text-[#3d4d75] opacity-50"
+              }`}
+            >
+              {n.label}
+              {!n.enabled && <span className="block text-[9px] font-normal">not configured</span>}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {depositWallet ? (
+        <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
+          <div className="shrink-0 rounded-xl bg-white p-3">
+            {qr ? (
+              <img src={qr} alt={`${network} deposit QR`} className="h-40 w-40" />
+            ) : (
+              <div className="h-40 w-40 animate-pulse rounded bg-[#E8EDFA]/20" />
+            )}
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#8FA3CC]">
+              Scan QR or send USDT ({network}) to
+            </p>
+            <p className="mt-1.5 break-all font-mono text-xs leading-relaxed text-[#7FA8FF]">
+              {depositWallet}
+            </p>
+            <button
+              onClick={() => {
+                navigator.clipboard?.writeText(depositWallet);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 1500);
+              }}
+              className="mt-2 text-xs font-semibold text-[#7FA8FF] hover:underline"
+            >
+              {copied ? "Copied!" : "Copy address"}
+            </button>
+            <p className="mt-3 text-[10px] leading-relaxed text-[#5F7099]">
+              {isTron
+                ? "Send USDT-TRC20 only — e.g. Binance → Withdraw → select TRON (TRC20)."
+                : "Send USDT-BEP20 only — e.g. Binance → Withdraw → select BSC (BEP20)."}
+              {" "}Wrong network se bhejne pe funds lost ho sakte hain.
+            </p>
+          </div>
+        </div>
+      ) : (
+        <p className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-2.5 text-xs text-amber-300">
+          {network} deposit wallet is being configured by the admin.
         </p>
-        <div className="flex gap-2">
+      )}
+
+      <form onSubmit={submit} className="mt-5 border-t border-[#16233F] pt-5">
+        <Field label={`${network} transaction hash`} hint="Deposit history mein credit hone tak thoda wait lag sakta hai">
           <input
             className={inputCls + " font-mono text-xs"}
             placeholder={isTron ? "64-char Tron tx id…" : "0x…"}
-            value={manualHash}
-            onChange={(e) => setManualHash(e.target.value)}
+            value={hash}
+            onChange={(e) => setHash(e.target.value)}
+            autoComplete="off"
+            required
           />
-          <button
-            disabled={!hashValid(manualHash, network)}
-            onClick={() => submitHash(manualHash.trim())}
-            className={btnGhost}
-          >
-            Submit
-          </button>
-        </div>
-      </div>
+        </Field>
+        <button type="submit" disabled={busy || !hashValid(hash, network)} className={`${btnPrimary} mt-4 w-full`}>
+          {busy ? "Verifying…" : "Verify deposit"}
+        </button>
+      </form>
+
+      {msg && (
+        <p className={`mt-4 rounded-lg border px-4 py-2.5 text-sm ${msg.ok ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300" : "border-red-500/30 bg-red-500/10 text-red-300"}`}>
+          {msg.text}
+        </p>
+      )}
     </Card>
   );
 }
