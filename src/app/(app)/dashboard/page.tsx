@@ -32,8 +32,10 @@ export default function DashboardPage() {
   const nextRank = rewards?.ranks?.find((r: any) => !r.claimed && !r.qualified);
   const claimedCount = rewards?.ranks?.filter((r: any) => r.claimed).length ?? 0;
   const unlockedLv = refStats?.unlockedLevels ?? 0;
-  const referralIncome =
-    Number(data?.totalDirectIncome ?? 0) + Number(data?.totalLevelIncome ?? 0);
+  const teamIncome =
+    Number(data?.totalDirectIncome ?? 0) +
+    Number(data?.totalLevelIncome ?? 0) +
+    Number(rewards?.totalEarned ?? 0);
 
   return (
     <>
@@ -65,8 +67,8 @@ export default function DashboardPage() {
             <StatCard label="Total ROI earned" value={fmtUsd(data.totalRoi)} accent />
             <StatCard
               label="Team income (total)"
-              value={fmtUsd(referralIncome)}
-              hint={`Direct + level · ${data.teamSize ?? 0} team members`}
+              value={fmtUsd(teamIncome)}
+              hint={`Direct + level + rank · ${data.teamSize ?? 0} team members`}
             />
           </div>
 
