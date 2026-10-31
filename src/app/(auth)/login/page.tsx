@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { ApiError } from "@/lib/api";
-import { Field, inputCls, btnPrimary } from "@/components/app/ui";
+import { Field, inputCls, btnPrimary, PasswordInput } from "@/components/app/ui";
 
 function LoginForm() {
   const { login } = useAuth();
@@ -67,14 +67,11 @@ function LoginForm() {
             />
           </Field>
           <Field label="Password">
-            <input
-              type="password"
-              className={inputCls}
+            <PasswordInput
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               autoComplete="current-password"
-              required
             />
           </Field>
           <div className="-mt-2 text-right">

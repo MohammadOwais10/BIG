@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { ApiError } from "@/lib/api";
-import { Field, inputCls, btnPrimary } from "@/components/app/ui";
+import { Field, inputCls, btnPrimary, PasswordInput } from "@/components/app/ui";
 
 function RegisterForm() {
   const { register } = useAuth();
@@ -17,6 +17,7 @@ function RegisterForm() {
     email: "",
     mobile: "",
     password: "",
+    confirmPassword: "",
     referralCode: params.get("ref") ?? "",
   });
   const [error, setError] = useState<string | null>(null);
@@ -28,6 +29,10 @@ function RegisterForm() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    if (form.password !== form.confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
     setBusy(true);
     try {
       await register({
@@ -74,7 +79,10 @@ function RegisterForm() {
             <input className={inputCls} value={form.mobile} onChange={set("mobile")} required minLength={10} placeholder="+15550001111" />
           </Field>
           <Field label="Password">
-            <input type="password" className={inputCls} value={form.password} onChange={set("password")} required minLength={8} autoComplete="new-password" />
+            <PasswordInput value={form.password} onChange={set("password")} minLength={8} autoComplete="new-password" />
+          </Field>
+          <Field label="Confirm password">
+            <PasswordInput value={form.confirmPassword} onChange={set("confirmPassword")} minLength={8} autoComplete="new-password" />
           </Field>
           <Field label="Referral code (optional)">
             <input className={inputCls} value={form.referralCode} onChange={set("referralCode")} placeholder="ABC12345" />

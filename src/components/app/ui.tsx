@@ -188,6 +188,76 @@ export function Copyable({ value, label }: { value: string; label?: string }) {
   );
 }
 
+export function PasswordInput({
+  value,
+  onChange,
+  placeholder,
+  autoComplete,
+  minLength,
+  required = true,
+}: {
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder?: string;
+  autoComplete?: string;
+  minLength?: number;
+  required?: boolean;
+}) {
+  const [visible, setVisible] = useState(false);
+  return (
+    <div className="relative">
+      <input
+        type={visible ? "text" : "password"}
+        className={`${inputCls} pr-11`}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        autoComplete={autoComplete}
+        minLength={minLength}
+        required={required}
+      />
+      <button
+        type="button"
+        onClick={() => setVisible((v) => !v)}
+        aria-label={visible ? "Hide password" : "Show password"}
+        className="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-[#5F7099] transition hover:text-[#7FA8FF]"
+      >
+        {visible ? (
+          <svg
+            aria-hidden
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="h-5 w-5"
+          >
+            <path d="M3 3l18 18" />
+            <path d="M10.6 10.6a2 2 0 002.8 2.8" />
+            <path d="M9.9 5.1A10.5 10.5 0 0112 5c5 0 9 4.5 9 7a11.8 11.8 0 01-2.9 3.9" />
+            <path d="M6.1 6.1C3.9 7.6 2 10 2 12c0 2.5 4 7 10 7a11 11 0 004.3-.9" />
+          </svg>
+        ) : (
+          <svg
+            aria-hidden
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="h-5 w-5"
+          >
+            <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+        )}
+      </button>
+    </div>
+  );
+}
+
 export const inputCls =
   "w-full rounded-xl border border-[#24406E] bg-[#0A1226] px-4 py-2.5 text-base text-[#E8EDFA] outline-none transition placeholder:text-[#45567E] focus:border-[#1255FF] focus:ring-2 focus:ring-[#1255FF]/25 sm:text-sm";
 
