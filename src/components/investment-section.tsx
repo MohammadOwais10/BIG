@@ -3,9 +3,9 @@ import { Reveal } from "@/components/reveal";
 
 export function InvestmentSection() {
   return (
-    <section id="package" className="relative border-t border-[var(--line)] py-16 sm:py-24 lg:py-32">
+    <section className="relative border-t border-[var(--line)] py-16 sm:py-24 lg:py-32">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(900px_420px_at_20%_0%,rgba(18,85,255,0.1),transparent_60%)]" />
-      <div className="relative mx-auto max-w-7xl px-6 lg:px-10">
+      <div id="package" className="anchor-target relative mx-auto max-w-7xl px-6 lg:px-10">
         <Reveal>
           <p className="eyebrow">{packageTerms.eyebrow}</p>
           <h2 className="mt-4 max-w-3xl font-display text-4xl leading-[1.02] tracking-tight text-white md:text-5xl">
@@ -16,13 +16,13 @@ export function InvestmentSection() {
           </p>
         </Reveal>
 
-        <div className="mt-14 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {packageTerms.terms.map((term, index) => (
             <Reveal key={term.label} delay={index * 0.06} className="h-full">
               <article className="panel-glass group relative flex h-full flex-col overflow-hidden rounded-3xl p-7">
                 <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-[radial-gradient(circle,rgba(18,85,255,0.18),transparent_70%)] transition group-hover:scale-110" />
                 <p className="panel-label relative">{term.label}</p>
-                <p className="relative mt-4 font-display text-4xl leading-none text-[var(--blue-soft)]">
+                <p className="relative mt-4 font-display text-3xl leading-none text-[var(--blue-soft)] xl:text-4xl">
                   {term.value}
                 </p>
                 <p className="relative -mx-7 mt-5 border-t border-[var(--line)] px-7 pt-5 text-sm leading-relaxed text-[#A9B6D0]">
@@ -32,20 +32,6 @@ export function InvestmentSection() {
             </Reveal>
           ))}
         </div>
-
-        <Reveal delay={0.08}>
-          <div className="panel-glass mt-6 flex flex-col gap-4 rounded-3xl px-7 py-6 md:flex-row md:items-center md:justify-between md:px-9">
-            <div>
-              <p className="panel-label">{packageTerms.rewardDepth.label}</p>
-              <p className="mt-2 text-sm leading-relaxed text-[#A9B6D0]">
-                {packageTerms.rewardDepth.note}
-              </p>
-            </div>
-            <p className="shrink-0 font-display text-4xl leading-none text-[var(--blue-soft)]">
-              {packageTerms.rewardDepth.value}
-            </p>
-          </div>
-        </Reveal>
 
         <Reveal delay={0.12}>
           <div className="mt-20 lg:mt-24">

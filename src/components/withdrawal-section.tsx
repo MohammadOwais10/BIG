@@ -38,13 +38,10 @@ export function WithdrawalSection() {
   const baseline = yOf(0);
 
   return (
-    <section
-      id="withdrawal"
-      className="relative border-t border-[var(--line)] py-16 sm:py-24 lg:py-32"
-    >
+    <section className="relative border-t border-[var(--line)] py-16 sm:py-24 lg:py-32">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(760px_380px_at_80%_10%,rgba(18,85,255,0.12),transparent_62%)]" />
 
-      <div className="relative mx-auto max-w-7xl px-6 lg:px-10">
+      <div id="withdrawal" className="anchor-target relative mx-auto max-w-7xl px-6 lg:px-10">
         <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
           <Reveal>
             <p className="eyebrow">{withdrawal.eyebrow}</p>
@@ -57,25 +54,6 @@ export function WithdrawalSection() {
             <p className="mt-4 max-w-2xl text-base font-medium leading-relaxed text-[var(--blue-soft)]">
               Insta deposit &amp; withdrawals through smart contract
             </p>
-          </Reveal>
-
-          <Reveal delay={0.08}>
-            <div className="grid grid-cols-2 gap-4">
-              {withdrawal.rules.map((rule) => (
-                <div
-                  key={rule.label}
-                  className="panel-glass min-w-0 rounded-2xl px-5 py-5 sm:min-w-[13rem] sm:px-6"
-                >
-                  <p className="micro-label">{rule.label}</p>
-                  <p className="mt-3 font-display text-3xl leading-none text-[var(--blue-soft)]">
-                    {rule.value}
-                  </p>
-                  <p className="mt-3 text-[11px] leading-relaxed text-[#93A7DE]">
-                    {rule.detail}
-                  </p>
-                </div>
-              ))}
-            </div>
           </Reveal>
         </div>
 

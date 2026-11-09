@@ -7,8 +7,8 @@ import { InstantDepositBar } from "@/components/instant-deposit-bar";
 import { MarketTickerBand } from "@/components/market-ticker-band";
 import { InvestmentSection } from "@/components/investment-section";
 import { TradingViewSection } from "@/components/trading-view-section";
-import { WithdrawalSection } from "@/components/withdrawal-section";
 import { EarningsSection } from "@/components/earnings-section";
+import { WithdrawalSection } from "@/components/withdrawal-section";
 import { ForexRiskSection } from "@/components/forex-risk-section";
 import { SiteFooter } from "@/components/site-footer";
 
@@ -26,8 +26,8 @@ export default function Home() {
         <MarketTickerBand />
         <InvestmentSection />
         <TradingViewSection />
-        <WithdrawalSection />
         <EarningsSection />
+        <WithdrawalSection />
         <ForexRiskSection />
       </main>
       <SiteFooter />
