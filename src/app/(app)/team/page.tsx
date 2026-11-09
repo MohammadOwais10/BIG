@@ -131,7 +131,7 @@ export default function TeamPage() {
             {stats.levelUnlocks.map((l: any) => (
               <div
                 key={l.level}
-                title={l.unlocked ? `${l.qualifiedMembers}/${l.members} members qualified` : (l.lockReason ?? "Locked")}
+                title={l.unlocked ? `${l.members} member(s) at this level` : (l.lockReason ?? "Locked")}
                 className={`rounded-xl border px-3 py-2.5 text-center ${
                   l.unlocked
                     ? "border-emerald-500/40 bg-emerald-500/10"
@@ -146,8 +146,8 @@ export default function TeamPage() {
                 </p>
                 <p className="text-[9px] text-[#5F7099]">
                   {l.unlocked
-                    ? `${l.qualifiedMembers}/${l.members} members`
-                    : `${l.requiredDirects}/member`}
+                    ? `${l.members} member${l.members === 1 ? "" : "s"}`
+                    : `${l.requiredDirects} directs`}
                 </p>
               </div>
             ))}
@@ -163,10 +163,9 @@ export default function TeamPage() {
           <details className="mt-3 text-[10px] text-[#5F7099]">
             <summary className="cursor-pointer hover:text-[#8FA3CC]">How level income works</summary>
             <p className="mt-1 rounded-lg border border-[#1C2C50] bg-[#0A1226]/60 px-3 py-2 text-[11px] leading-relaxed text-[#8FA3CC]">
-              You earn a % of your downline&apos;s daily ROI up to 20 levels. A level opens only
-              when every member of the previous level meets the direct-referral rule: 2 active
-              directs (levels 1–5) or 1 active direct (levels 6–20). &quot;Active&quot; means the
-              member has a live investment — one unqualified member locks everything below.
+              You earn a % of your downline&apos;s daily ROI up to 20 levels. Levels unlock by
+              YOUR OWN active directs: L1–L5 need 2/4/6/8/10 directs, then +1 per level
+              (L6=11 … L20=25). &quot;Active&quot; means the referral holds a live investment.
             </p>
           </details>
         </Card>

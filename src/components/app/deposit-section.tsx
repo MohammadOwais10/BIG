@@ -277,9 +277,9 @@ export function DepositCard({
                   : `Send ${amount || "0"} USDT`}
             </button>
 
-            <button type="button" onClick={() => open()} className={`${btnGhost} w-full`}>
+            {/* <button type="button" onClick={() => open()} className={`${btnGhost} w-full`}>
               Switch wallet
-            </button>
+            </button> */}
           </form>
         ))}
 
