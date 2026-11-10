@@ -84,10 +84,26 @@ export function HeroSection() {
             <span className="absolute inset-0 translate-x-[-120%] bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.35),transparent)] transition group-hover:translate-x-[120%] duration-700" />
           </a>
           <a
-            href="#package"
+            href={hero.secondaryHref}
+            target="_blank"
+            rel="noopener noreferrer"
             className="group inline-flex w-full items-center justify-center gap-2.5 rounded-full border border-[rgba(127,168,255,0.45)] px-6 py-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--blue-soft)] transition hover:border-[var(--blue-soft)] hover:bg-[rgba(127,168,255,0.1)] sm:w-auto sm:px-7 sm:py-3.5 sm:text-[12px]"
           >
             {hero.secondaryCta}
+            <svg
+              aria-hidden
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="size-4"
+            >
+              <path d="M12 3v12" />
+              <path d="m7 10 5 5 5-5" />
+              <path d="M5 21h14" />
+            </svg>
           </a>
         </motion.div>
       </div>

@@ -33,10 +33,10 @@
 
 html {
   scroll-behavior: smooth;
-  /* Offset anchor targets so the fixed header does not cover them. */
-  scroll-padding-top: 5.5rem;
 }
 
+/* Offset anchor targets so the fixed header does not cover them. */
+.anchor-target,
 section[id] {
   scroll-margin-top: 5.5rem;
 }
