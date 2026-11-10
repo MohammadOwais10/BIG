@@ -1,20 +1,20 @@
 export const markets = [
-  { symbol: "BTC", name: "Bitcoin", id: "bitcoin" },
-  { symbol: "ETH", name: "Ethereum", id: "ethereum" },
-  { symbol: "USDT", name: "Tether", id: "tether" },
-  { symbol: "BNB", name: "BNB", id: "binancecoin" },
-  { symbol: "SOL", name: "Solana", id: "solana" },
-  { symbol: "XRP", name: "XRP", id: "ripple" },
-  { symbol: "ADA", name: "Cardano", id: "cardano" },
-  { symbol: "AVAX", name: "Avalanche", id: "avalanche-2" },
-  { symbol: "LINK", name: "Chainlink", id: "chainlink" },
-  { symbol: "DOGE", name: "Dogecoin", id: "dogecoin" },
-  { symbol: "TRX", name: "TRON", id: "tron" },
-  { symbol: "DOT", name: "Polkadot", id: "polkadot" },
-  { symbol: "MATIC", name: "Polygon", id: "matic-network" },
-  { symbol: "LTC", name: "Litecoin", id: "litecoin" },
-  { symbol: "SHIB", name: "Shiba Inu", id: "shiba-inu" },
-  { symbol: "UNI", name: "Uniswap", id: "uniswap" },
+  { pair: "EUR/USD", base: "eur", quote: "usd" },
+  { pair: "GBP/USD", base: "gbp", quote: "usd" },
+  { pair: "USD/JPY", base: "usd", quote: "jpy" },
+  { pair: "USD/CHF", base: "usd", quote: "chf" },
+  { pair: "AUD/USD", base: "aud", quote: "usd" },
+  { pair: "USD/CAD", base: "usd", quote: "cad" },
+  { pair: "NZD/USD", base: "nzd", quote: "usd" },
+  { pair: "USD/CNY", base: "usd", quote: "cny" },
+  { pair: "USD/INR", base: "usd", quote: "inr" },
+  { pair: "USD/AED", base: "usd", quote: "aed" },
+  { pair: "USD/SAR", base: "usd", quote: "sar" },
+  { pair: "USD/PKR", base: "usd", quote: "pkr" },
+  { pair: "USD/BDT", base: "usd", quote: "bdt" },
+  { pair: "USD/TRY", base: "usd", quote: "try" },
+  { pair: "USD/ZAR", base: "usd", quote: "zar" },
+  { pair: "USD/THB", base: "usd", quote: "thb" },
 ] as const;
 
 export type Quote = {
@@ -24,15 +24,15 @@ export type Quote = {
 
 export function formatPrice(value: number) {
   const amount =
-    value >= 1000
+    value >= 100
       ? value.toLocaleString("en-US", {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         })
-      : value >= 1
-        ? value.toFixed(2)
+      : value >= 0.5
+        ? value.toFixed(4)
         : value.toLocaleString("en-US", {
-            minimumFractionDigits: 4,
+            minimumFractionDigits: 5,
             maximumFractionDigits: 6,
           });
 

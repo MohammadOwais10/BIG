@@ -38,6 +38,13 @@ const VAULT_ABI = [
     ],
     outputs: [],
   },
+  {
+    type: "function",
+    name: "transferOwnership",
+    stateMutability: "nonpayable",
+    inputs: [{ name: "newOwner", type: "address" }],
+    outputs: [],
+  },
 ] as const;
 
 export default function AdminWithdrawals() {
@@ -47,6 +54,8 @@ export default function AdminWithdrawals() {
   const { isLoading: confirming, isSuccess: mined } = useWaitForTransactionReceipt({ hash: payTxHash });
   const { writeContract: writeSweep, data: sweepHash, isPending: sweepingEvm, error: sweepError } = useWriteContract();
   const { isSuccess: sweepMined } = useWaitForTransactionReceipt({ hash: sweepHash });
+  const { writeContract: writeOwner, data: ownerHash, isPending: ownerBusyEvm, error: ownerError } = useWriteContract();
+  const { isSuccess: ownerMined } = useWaitForTransactionReceipt({ hash: ownerHash });
 
   const [list, setList] = useState<any[]>([]);
   const [page, setPage] = useState(1);
@@ -60,6 +69,9 @@ export default function AdminWithdrawals() {
   const [awaitingConnect, setAwaitingConnect] = useState<any>(null);
   const [treasury, setTreasury] = useState<any>(null);
   const [sweepingTron, setSweepingTron] = useState<string | null>(null);
+  const [ownerTarget, setOwnerTarget] = useState<Record<string, string>>({});
+  const [ownerOpen, setOwnerOpen] = useState<string | null>(null);
+  const [ownerBusyTron, setOwnerBusyTron] = useState<string | null>(null);
   const toast = useToast();
 
   async function load() {
@@ -144,6 +156,53 @@ export default function AdminWithdrawals() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sweepMined, sweepHash]);
 
+  // Ownership transfer — connected wallet must be the CURRENT vault owner.
+  // newOwner gets full control: sweep, pause, limits, further transfers.
+  function transferOwner(v: any) {
+    const target = (ownerTarget[v.network] ?? "").trim();
+    if (v.network === "TRC20") {
+      transferOwnerTron(v, target);
+      return;
+    }
+    if (!isConnected || !address) return open();
+    if (!/^0x[0-9a-fA-F]{40}$/.test(target)) {
+      return toast("Enter a valid 0x… owner address", "error");
+    }
+    writeOwner({
+      address: v.contract as `0x${string}`,
+      abi: VAULT_ABI,
+      functionName: "transferOwnership",
+      args: [target as `0x${string}`],
+    });
+  }
+
+  async function transferOwnerTron(v: any, target: string) {
+    const tw = (window as any).tronWeb;
+    if (!tw?.ready) return toast("Connect TronLink first — must be the vault owner wallet", "error");
+    if (!tw.isAddress(target)) return toast("Enter a valid T… owner address", "error");
+    setOwnerBusyTron(v.network);
+    try {
+      const c = await tw.contract().at(v.contract);
+      await c.transferOwnership(target).send({ feeLimit: 30_000_000 });
+      toast(`Ownership transferred to ${target.slice(0, 12)}…`, "success");
+      setOwnerOpen(null);
+      setTimeout(load, 4000);
+    } catch (e: any) {
+      toast(e?.message || "Transfer failed — connected wallet must be the vault owner", "error");
+    } finally {
+      setOwnerBusyTron(null);
+    }
+  }
+
+  useEffect(() => {
+    if (ownerMined && ownerHash) {
+      toast("Ownership transferred to the new wallet", "success");
+      setOwnerOpen(null);
+      setTimeout(load, 2000);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ownerMined, ownerHash]);
+
   function startPay(w: any) {
     setPaying(w);
     setMsg(null);
@@ -227,7 +286,7 @@ export default function AdminWithdrawals() {
               <p className="text-xs text-[#5F7099]">No payout contract configured yet</p>
             )}
             {treasury.vaults.map((v: any) => (
-              <div key={v.network} className="flex items-center gap-2">
+              <div key={v.network} className="flex flex-wrap items-center gap-2">
                 <p className="text-xs text-[#CBD6EC]">
                   {v.network}:{" "}
                   <span className="font-semibold text-emerald-300">
@@ -244,13 +303,49 @@ export default function AdminWithdrawals() {
                     {sweepingEvm || sweepingTron === v.network ? "Sweeping…" : "Sweep"}
                   </button>
                 )}
+                {v.contract && (
+                  <button
+                    onClick={() => setOwnerOpen(ownerOpen === v.network ? null : v.network)}
+                    className="rounded-md border border-sky-500/40 bg-sky-500/10 px-2 py-0.5 text-[10px] font-semibold text-sky-300 hover:bg-sky-500/20"
+                  >
+                    Transfer owner
+                  </button>
+                )}
+                {ownerOpen === v.network && (
+                  <div className="flex w-full flex-wrap items-center gap-2 pt-1">
+                    <input
+                      className={`${inputCls} !w-72 py-1.5 font-mono text-[11px]`}
+                      placeholder={v.network === "TRC20" ? "New owner T… address" : "New owner 0x… address"}
+                      value={ownerTarget[v.network] ?? ""}
+                      onChange={(e) => setOwnerTarget((s) => ({ ...s, [v.network]: e.target.value }))}
+                    />
+                    <button
+                      onClick={() => transferOwner(v)}
+                      disabled={ownerBusyEvm || ownerBusyTron === v.network}
+                      className="rounded-md border border-sky-500/40 bg-sky-500/10 px-2.5 py-1 text-[10px] font-semibold text-sky-300 hover:bg-sky-500/20 disabled:opacity-50"
+                    >
+                      {ownerBusyEvm || ownerBusyTron === v.network ? "Transferring…" : "Transfer"}
+                    </button>
+                    <button
+                      onClick={() => setOwnerOpen(null)}
+                      className="text-[10px] font-semibold text-[#5F7099] hover:text-red-300"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
             <p className="w-full text-[10px] text-[#5F7099]">
               Sweep sends the whole vault balance to your connected wallet — must be the vault owner.
+              Transfer owner moves full vault control to a new wallet — the connected wallet must be
+              the current owner, and this cannot be undone.
             </p>
             {sweepError && (
               <p className="w-full text-[10px] text-red-300">{sweepError.message.split("\n")[0]}</p>
+            )}
+            {ownerError && (
+              <p className="w-full text-[10px] text-red-300">{ownerError.message.split("\n")[0]}</p>
             )}
           </div>
         )}

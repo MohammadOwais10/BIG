@@ -10,32 +10,68 @@ import {
 
 const REFRESH_MS = 60_000;
 
+type RateTable = Record<string, number>;
+
+async function fetchRates(date: string, signal: AbortSignal): Promise<RateTable> {
+  const urls = [
+    `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@${date}/v1/currencies/usd.json`,
+    `https://${date}.currency-api.pages.dev/v1/currencies/usd.json`,
+  ];
+
+  let lastError: unknown = new Error("FX feed unavailable");
+  for (const url of urls) {
+    try {
+      const response = await fetch(url, { signal, cache: "no-store" });
+      if (!response.ok) {
+        throw new Error(`FX feed responded with ${response.status}`);
+      }
+      const data = (await response.json()) as { usd?: RateTable };
+      if (data.usd && typeof data.usd === "object") {
+        return data.usd;
+      }
+    } catch (error) {
+      if (signal.aborted) throw error;
+      lastError = error;
+    }
+  }
+  throw lastError;
+}
+
+function pairPrice(rates: RateTable, base: string, quote: string) {
+  const baseRate = base === "usd" ? 1 : rates[base];
+  const quoteRate = quote === "usd" ? 1 : rates[quote];
+  if (typeof baseRate !== "number" || typeof quoteRate !== "number") return null;
+  return quoteRate / baseRate;
+}
+
 export function MarketTickerBand() {
   const [quotes, setQuotes] = useState<Record<string, Quote> | null>(null);
   const [status, setStatus] = useState<"live" | "error">("live");
   const abortRef = useRef<AbortController | null>(null);
 
   const load = useCallback(async (signal: AbortSignal) => {
-    const ids = markets.map((market) => market.id).join(",");
-    const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`;
+    const today = await fetchRates("latest", signal);
 
-    const response = await fetch(url, { signal, cache: "no-store" });
-    if (!response.ok) {
-      throw new Error(`Price feed responded with ${response.status}`);
+    let previous: RateTable | null = null;
+    for (let daysBack = 1; daysBack <= 4 && !previous; daysBack++) {
+      const date = new Date(Date.now() - daysBack * 86_400_000)
+        .toISOString()
+        .slice(0, 10);
+      previous = await fetchRates(date, signal).catch(() => null);
     }
-
-    const data: Record<string, { usd?: number; usd_24h_change?: number }> =
-      await response.json();
 
     const next: Record<string, Quote> = {};
     for (const market of markets) {
-      const price = data[market.id]?.usd;
-      if (typeof price === "number") {
-        next[market.symbol] = {
-          price,
-          change24h: data[market.id]?.usd_24h_change ?? 0,
-        };
-      }
+      const price = pairPrice(today, market.base, market.quote);
+      if (price == null || !Number.isFinite(price)) continue;
+      const prevPrice = previous
+        ? pairPrice(previous, market.base, market.quote)
+        : null;
+      next[market.pair] = {
+        price,
+        change24h:
+          prevPrice && prevPrice > 0 ? (price / prevPrice - 1) * 100 : 0,
+      };
     }
 
     setQuotes(next);
@@ -54,7 +90,7 @@ export function MarketTickerBand() {
         await load(controller.signal);
       } catch (error) {
         if (!active || controller.signal.aborted) return;
-        console.error("Unable to load market prices", error);
+        console.error("Unable to load exchange rates", error);
         setStatus("error");
       }
     };
@@ -72,18 +108,19 @@ export function MarketTickerBand() {
   const track = [0, 1].map((loop) => (
     <span key={loop} className="flex items-center">
       {markets.map((market) => {
-        const quote = quotes?.[market.symbol];
+        const quote = quotes?.[market.pair];
         const isUp = (quote?.change24h ?? 0) >= 0;
+        const [base, counter] = market.pair.split("/");
 
         return (
           <span
-            key={`${loop}-${market.symbol}`}
+            key={`${loop}-${market.pair}`}
             className="group flex items-center gap-2.5 px-6 py-1.5 whitespace-nowrap"
           >
             <span className="font-display text-[13px] font-semibold tracking-[0.06em] text-[#DCE6FF] transition-colors group-hover:text-white">
-              {market.symbol}
+              {base}
               <span className="text-[10px] font-medium tracking-[0.14em] text-[#8A99C4]">
-                /USD
+                /{counter}
               </span>
             </span>
 
@@ -142,8 +179,8 @@ export function MarketTickerBand() {
 
       <span className="sr-only" role="status">
         {status === "error"
-          ? "Live market prices are temporarily unavailable."
-          : "Live market prices in USD."}
+          ? "Live foreign exchange rates are temporarily unavailable."
+          : "Live foreign exchange rates."}
       </span>
     </div>
   );
