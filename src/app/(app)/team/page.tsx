@@ -229,9 +229,19 @@ export default function TeamPage() {
                 <li key={u.id} className="flex items-center justify-between gap-3 py-3">
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium text-[#E8EDFA]">{u.name}</p>
-                    <p className="truncate text-xs text-[#5F7099]">{u.referralCode} · joined {fmtDate(u.createdAt)}</p>
+                    <p className="truncate text-xs text-[#5F7099]">
+                      {u.referralCode} · joined {fmtDate(u.createdAt)}
+                      {(u.invested ?? 0) > 0 && ` · invested ${fmtUsd(u.invested)}`}
+                    </p>
                   </div>
-                  <Badge value={u.status} />
+                  <div className="flex shrink-0 items-center gap-2">
+                    {(u.invested ?? 0) > 0 && (
+                      <span className="ticker-numeric text-xs font-semibold text-emerald-300">
+                        {fmtUsd(u.invested)}
+                      </span>
+                    )}
+                    <Badge value={u.status} />
+                  </div>
                 </li>
               ))}
             </ul>

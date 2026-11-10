@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { api, fmtUsd, fmtDate, ApiError } from "@/lib/api";
 import { PageHeader } from "@/components/app/app-shell";
-import { Card, Badge, Spinner, EmptyState, Pager, inputCls } from "@/components/app/ui";
+import { Card, Badge, Spinner, EmptyState, Pager, Field, inputCls, btnPrimary } from "@/components/app/ui";
 
 export default function AdminUsers() {
   const [users, setUsers] = useState<any[]>([]);
@@ -14,6 +14,8 @@ export default function AdminUsers() {
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<any>(null);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [edit, setEdit] = useState({ name: "", email: "", mobile: "" });
+  const [saving, setSaving] = useState(false);
 
   async function load() {
     setLoading(true);
@@ -35,6 +37,33 @@ export default function AdminUsers() {
   async function openUser(id: string) {
     const r = await api.adminUser(id);
     setSelected(r.data.user);
+    setEdit({
+      name: r.data.user.name ?? "",
+      email: r.data.user.email ?? "",
+      mobile: r.data.user.mobile ?? "",
+    });
+    setMsg(null);
+  }
+
+  async function saveUser(e: React.FormEvent) {
+    e.preventDefault();
+    if (!selected) return;
+    setSaving(true);
+    setMsg(null);
+    try {
+      await api.adminUpdateUser(selected.id, {
+        name: edit.name.trim() || undefined,
+        email: edit.email.trim() || undefined,
+        mobile: edit.mobile.trim() || undefined,
+      });
+      await load();
+      await openUser(selected.id);
+      setMsg({ ok: true, text: "User details updated" });
+    } catch (err) {
+      setMsg({ ok: false, text: err instanceof ApiError ? err.message : "Update failed" });
+    } finally {
+      setSaving(false);
+    }
   }
 
   async function toggleStatus(u: any) {
@@ -134,6 +163,41 @@ export default function AdminUsers() {
                   locked {fmtUsd(selected.wallet?.lockedBalance)}
                 </p>
               </div>
+
+              <form onSubmit={saveUser} className="space-y-3 border-t border-[#16233F] pt-4">
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-[#5F7099]">
+                  Edit details (admin only)
+                </p>
+                <Field label="Full name">
+                  <input
+                    className={inputCls}
+                    value={edit.name}
+                    onChange={(e) => setEdit((s) => ({ ...s, name: e.target.value }))}
+                    maxLength={60}
+                    required
+                  />
+                </Field>
+                <Field label="Email">
+                  <input
+                    type="email"
+                    className={inputCls}
+                    value={edit.email}
+                    onChange={(e) => setEdit((s) => ({ ...s, email: e.target.value }))}
+                    required
+                  />
+                </Field>
+                <Field label="Mobile">
+                  <input
+                    className={inputCls}
+                    value={edit.mobile}
+                    onChange={(e) => setEdit((s) => ({ ...s, mobile: e.target.value }))}
+                    maxLength={20}
+                  />
+                </Field>
+                <button type="submit" disabled={saving} className={`${btnPrimary} w-full`}>
+                  {saving ? "Saving…" : "Save changes"}
+                </button>
+              </form>
 
               {msg && (
                 <p className={`rounded-lg border px-3 py-2 text-xs ${msg.ok ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300" : "border-red-500/30 bg-red-500/10 text-red-300"}`}>

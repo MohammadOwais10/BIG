@@ -34,6 +34,12 @@ function hashValid(hash: string, network: string) {
   return network === "TRC20" ? /^[0-9a-fA-F]{64}$/.test(h) : /^0x[0-9a-fA-F]{64}$/.test(h);
 }
 
+// Deposits are only accepted in multiples of $100 (100, 200, 300…)
+const validDepositAmount = (amount: string) => {
+  const n = Number(amount);
+  return n > 0 && n % 100 === 0;
+};
+
 // Fresh chain txs take a few seconds to reach the indexer — retry before failing.
 async function submitWithRetry(hash: string, network: string, attempt = 0): Promise<any> {
   try {
@@ -140,6 +146,10 @@ export function DepositCard({
 
   function sendUsdt(e: React.FormEvent) {
     e.preventDefault();
+    if (!validDepositAmount(amount)) {
+      toast("Amount must be a multiple of $100 (100, 200, 300…)", "error");
+      return;
+    }
     setMsg(null);
     setSubmitted(false);
     writeContract({
@@ -166,6 +176,10 @@ export function DepositCard({
 
   async function sendTron(e: React.FormEvent) {
     e.preventDefault();
+    if (!validDepositAmount(amount)) {
+      toast("Amount must be a multiple of $100 (100, 200, 300…)", "error");
+      return;
+    }
     const tw = (window as any).tronWeb;
     if (!tw?.ready) return toast("Connect TronLink first", "error");
     if (!config?.contract) return toast("TRC20 USDT is not configured", "error");
@@ -256,20 +270,20 @@ export function DepositCard({
           <form onSubmit={sendUsdt} className="space-y-4">
             <WalletConnect />
 
-            <Field label="Amount (USDT)" hint="Deposits of $100 or more are invested automatically">
+            <Field label="Amount (USDT)" hint="Multiples of $100 only (100, 200, 300…) — auto-invested">
               <input
                 type="number"
-                min="0.01"
-                step="0.01"
+                min="100"
+                step="100"
                 className={inputCls}
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                placeholder="100.00"
+                placeholder="100"
                 required
               />
             </Field>
 
-            <button type="submit" disabled={sending || confirming || !amount || !depositWallet} className={`${btnPrimary} w-full`}>
+            <button type="submit" disabled={sending || confirming || !validDepositAmount(amount) || !depositWallet} className={`${btnPrimary} w-full`}>
               {sending
                 ? "Confirm in wallet…"
                 : confirming
@@ -312,19 +326,19 @@ export function DepositCard({
                   Disconnect
                 </button>
               </div>
-              <Field label="Amount (USDT)" hint="Deposits of $100 or more are invested automatically">
+              <Field label="Amount (USDT)" hint="Multiples of $100 only (100, 200, 300…) — auto-invested">
                 <input
                   type="number"
-                  min="0.01"
-                  step="0.01"
+                  min="100"
+                  step="100"
                   className={inputCls}
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  placeholder="100.00"
+                  placeholder="100"
                   required
                 />
               </Field>
-              <button type="submit" disabled={tronBusy || !amount} className={`${btnPrimary} w-full`}>
+              <button type="submit" disabled={tronBusy || !validDepositAmount(amount)} className={`${btnPrimary} w-full`}>
                 {tronBusy ? "Confirm in TronLink…" : `Send ${amount || "0"} USDT`}
               </button>
             </>
@@ -468,7 +482,7 @@ export function ManualDepositCard({ onCredited }: { onCredited?: () => void }) {
             <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#8FA3CC]">
               Scan QR or send USDT ({network}) to
             </p>
-            <p className="mt-1.5 break-all font-mono text-xs leading-relaxed text-[#7FA8FF]">
+            <p className="mt-1.5 break-all font-mono text-xs leading-relaxed text-amber-300">
               {depositWallet}
             </p>
             <button
@@ -477,7 +491,7 @@ export function ManualDepositCard({ onCredited }: { onCredited?: () => void }) {
                 setCopied(true);
                 setTimeout(() => setCopied(false), 1500);
               }}
-              className="mt-2 text-xs font-semibold text-[#7FA8FF] hover:underline"
+              className="mt-2 text-xs font-semibold text-amber-300 hover:underline"
             >
               {copied ? "Copied!" : "Copy address"}
             </button>
@@ -485,7 +499,8 @@ export function ManualDepositCard({ onCredited }: { onCredited?: () => void }) {
               {isTron
                 ? "Send USDT-TRC20 only — e.g. Binance → Withdraw → select TRON (TRC20)."
                 : "Send USDT-BEP20 only — e.g. Binance → Withdraw → select BSC (BEP20)."}
-              {" "}Wrong network se bhejne pe funds lost ho sakte hain.
+              {" "}Amount <b className="text-[#9FB8EE]">100 ke multiples</b> mein hi bhejo —
+              101/150 jaisi values reject ho jayengi.
             </p>
           </div>
         </div>

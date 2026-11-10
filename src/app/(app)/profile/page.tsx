@@ -133,14 +133,6 @@ export default function ProfilePage() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [kyc, setKyc] = useState<KycMe | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [name, setName] = useState(user?.name ?? "");
-  const [mobile, setMobile] = useState(user?.mobile ?? "");
-
-  useEffect(() => {
-    setName(user?.name ?? "");
-    setMobile(user?.mobile ?? "");
-  }, [user]);
 
   useEffect(() => {
     api
@@ -164,20 +156,6 @@ export default function ProfilePage() {
     } finally {
       setUploading(false);
       if (inputRef.current) inputRef.current.value = "";
-    }
-  }
-
-  async function onSave(e: React.FormEvent) {
-    e.preventDefault();
-    setSaving(true);
-    try {
-      await api.updateMe({ name: name.trim() || undefined, mobile: mobile.trim() || undefined });
-      await refreshUser();
-      toast("Profile updated", "success");
-    } catch (err) {
-      toast(err instanceof ApiError ? err.message : "Update failed", "error");
-    } finally {
-      setSaving(false);
     }
   }
 
@@ -242,22 +220,22 @@ export default function ProfilePage() {
         </div>
       </Card>
 
-      {/* Edit details */}
+      {/* Account details — name/mobile are admin-managed */}
       <div className="mt-4">
-        <Card title="Edit details">
-          <form onSubmit={onSave} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <Field label="Full name">
-              <input className={inputCls} value={name} onChange={(e) => setName(e.target.value)} maxLength={60} required />
-            </Field>
-            <Field label="Mobile">
-              <input className={inputCls} value={mobile} onChange={(e) => setMobile(e.target.value)} maxLength={20} />
-            </Field>
-            <div className="sm:col-span-2">
-              <button type="submit" disabled={saving} className={btnPrimary}>
-                {saving ? "Saving…" : "Save changes"}
-              </button>
+        <Card title="Account details">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="rounded-xl border border-[#1C2C50] bg-[#0A1226]/60 px-4 py-3">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#5F7099]">Full name</p>
+              <p className="mt-1 text-sm text-[#E8EDFA]">{user.name}</p>
             </div>
-          </form>
+            <div className="rounded-xl border border-[#1C2C50] bg-[#0A1226]/60 px-4 py-3">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#5F7099]">Mobile</p>
+              <p className="mt-1 text-sm text-[#E8EDFA]">{user.mobile || "—"}</p>
+            </div>
+          </div>
+          {/* <p className="mt-3 text-[11px] text-[#5F7099]">
+            Need to change your name or mobile? Contact support — an admin will update it for you.
+          </p> */}
         </Card>
       </div>
 
