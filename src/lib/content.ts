@@ -366,6 +366,50 @@ export const corporate = {
   ],
 };
 
+export const riskDisclosure = {
+  title: "Risk Disclosure, Disclaimer & User Consent",
+  intro:
+    "By registering on this platform, I acknowledge, understand, and agree to the following terms:",
+  points: [
+    {
+      title: "Market Risk",
+      body: "Trading and investing in financial markets, including Forex, Gold, Commodities, Indices, Stocks, and other financial instruments, involve substantial risks due to market volatility, economic conditions, geopolitical developments, news announcements, and unforeseen events.",
+    },
+    {
+      title: "No Guaranteed Returns",
+      body: "I understand that all profits, returns, projections, performance figures, or historical results are indicative only. No fixed, assured, or guaranteed returns are promised.",
+    },
+    {
+      title: "Risk of Capital Loss",
+      body: "I acknowledge that trading may result in partial or complete loss of my invested capital. I understand that I should invest only funds that I can afford to lose.",
+    },
+    {
+      title: "Trade Management",
+      body: "I understand that trades may be executed or managed on my behalf, subject to the applicable service agreement and authorization provided by me. Trading decisions and execution may result in profits or losses.",
+    },
+    {
+      title: "Market Volatility",
+      body: "I acknowledge that market conditions, price gaps, liquidity shortages, slippage, broker limitations, technical failures, and unexpected market events may affect trade execution and results.",
+    },
+    {
+      title: "No Guarantee of Performance",
+      body: "The platform, its management, representatives, affiliates, and service providers do not guarantee profits, capital protection, or any particular investment outcome.",
+    },
+    {
+      title: "Independent Decision",
+      body: "I confirm that I have evaluated the risks, my financial circumstances, and my investment objectives before participating in the platform.",
+    },
+    {
+      title: "Acceptance of Risk",
+      body: "I voluntarily accept the financial risks associated with trading and investing and understand that I am responsible for reviewing the applicable agreements and disclosures before proceeding.",
+    },
+  ],
+  outro:
+    "By selecting the acceptance checkbox, I confirm that I have read, understood, and agreed to this Risk Disclosure and Disclaimer.",
+  checkboxLabel:
+    "I have read, understood, and agree to the Risk Disclosure and Disclaimer.",
+};
+
 export const navLinks = [
   { href: "#package", label: "Package" },
   { href: "#trading", label: "Trading" },
