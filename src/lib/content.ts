@@ -339,9 +339,10 @@ export const corporate = {
   entityType: "Registered corporation",
   jurisdiction: "State of Colorado, United States",
   address: [
-    "1942 Broadway Street, Suite 314C",
-    "Boulder, Colorado 80302",
-    "United States of America",
+    "Office A, Innovation City Business Centre",
+    "RAK BANK ROC Office, Ground Floor",
+    "Al Rifaa, Sheikh Mohammed Bin Zayed Road",
+    "Ras Al Khaimah, UAE.",
   ],
   statement:
     "BeInGroup operates with a commitment to transparency, innovation, and long-term business development while delivering technology-driven trading solutions for its global member community.",

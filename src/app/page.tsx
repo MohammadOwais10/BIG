@@ -5,6 +5,7 @@ import { SiteHeader } from "@/components/site-header";
 import { HeroSection } from "@/components/hero-section";
 import { InstantDepositBar } from "@/components/instant-deposit-bar";
 import { MarketTickerBand } from "@/components/market-ticker-band";
+import { LaunchOfferBanner } from "@/components/launch-offer-banner";
 import { InvestmentSection } from "@/components/investment-section";
 import { TradingViewSection } from "@/components/trading-view-section";
 import { EarningsSection } from "@/components/earnings-section";
@@ -24,6 +25,7 @@ export default function Home() {
         <HeroSection />
         <InstantDepositBar />
         <MarketTickerBand />
+        <LaunchOfferBanner />
         <InvestmentSection />
         <TradingViewSection />
         <EarningsSection />

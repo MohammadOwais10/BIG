@@ -184,6 +184,20 @@ body {
   animation: shimmer 4.5s ease-in-out infinite;
 }
 
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.animate-blink {
+  animation: blink 1.4s ease-in-out infinite;
+}
+
 @keyframes float-soft {
   0%,
   100% {
@@ -251,6 +265,7 @@ body {
 
   .marquee-track,
   .float-soft,
+  .animate-blink,
   .animate-ping {
     animation: none;
   }
