@@ -367,7 +367,7 @@ export const corporate = {
 };
 
 export const riskDisclosure = {
-  title: "Risk Disclosure, Disclaimer & User Consent",
+  title: "Risk Disclosure, Disclaimer",
   intro:
     "By registering on this platform, I acknowledge, understand, and agree to the following terms:",
   points: [
