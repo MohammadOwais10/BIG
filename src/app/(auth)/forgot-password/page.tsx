@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { api, ApiError } from "@/lib/api";
-import { Field, inputCls, btnPrimary, btnGhost } from "@/components/app/ui";
+import { Field, inputCls, btnPrimary } from "@/components/app/ui";
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
@@ -137,9 +137,16 @@ export default function ForgotPasswordPage() {
             <button type="submit" disabled={busy || code.length !== 6} className={`${btnPrimary} w-full`}>
               {busy ? "Resetting…" : "Set new password"}
             </button>
-            <button type="button" onClick={sendCode} disabled={cooldown > 0 || busy} className={`${btnGhost} w-full`}>
-              {cooldown > 0 ? `Resend code in ${cooldown}s` : "Resend code"}
-            </button>
+            <div className="text-center">
+              <button
+                type="button"
+                onClick={sendCode}
+                disabled={cooldown > 0 || busy}
+                className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#7FA8FF] transition hover:underline disabled:text-[#5F7099] disabled:no-underline"
+              >
+                {cooldown > 0 ? `Resend code in ${cooldown}s` : "Resend code"}
+              </button>
+            </div>
           </form>
         )}
 
