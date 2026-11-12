@@ -243,7 +243,7 @@ export default function DailyRoiPage() {
                   Process payouts for {date}
                 </button>
                 <p className="text-[10px] text-[#5F7099]">
-                  You can process any time — wallets are credited between 6:00–8:00 PM.
+                  You can process any time — wallets are credited between 6:00–9:00 AM.
                   Outside the window the request is queued and runs automatically.
                 </p>
               </>
