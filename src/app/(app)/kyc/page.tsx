@@ -39,7 +39,6 @@ export default function KycPage() {
   const [docNumber, setDocNumber] = useState("");
   const [idFront, setIdFront] = useState<File | null>(null);
   const [idBack, setIdBack] = useState<File | null>(null);
-  const [selfie, setSelfie] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const toast = useToast();
@@ -62,8 +61,8 @@ export default function KycPage() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setMsg(null);
-    if (!idFront || !selfie) {
-      setMsg({ ok: false, text: "ID front photo and selfie are required." });
+    if (!idFront) {
+      setMsg({ ok: false, text: "ID front photo is required." });
       return;
     }
     setBusy(true);
@@ -73,7 +72,6 @@ export default function KycPage() {
       form.append("documentNumber", docNumber.trim());
       form.append("idFront", idFront);
       if (idBack) form.append("idBack", idBack);
-      form.append("selfie", selfie);
       await api.kycSubmit(form);
       toast("KYC submitted for review", "success");
       await load();
@@ -88,7 +86,7 @@ export default function KycPage() {
 
   return (
     <>
-      <PageHeader title="KYC Verification" sub="Submit a government ID + selfie — required before withdrawals" />
+      <PageHeader title="KYC Verification" sub="Submit a government ID — required before withdrawals" />
 
       <div className="grid gap-6 lg:grid-cols-2">
         {loading ? (
@@ -127,7 +125,6 @@ export default function KycPage() {
               </Field>
               <FileField label="ID front photo" onChange={setIdFront} />
               <FileField label="ID back photo (optional)" hint="optional" onChange={setIdBack} />
-              <FileField label="Selfie holding the ID" onChange={setSelfie} />
               {msg && (
                 <p className={`rounded-lg border px-4 py-2.5 text-sm ${msg.ok ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300" : "border-red-500/30 bg-red-500/10 text-red-300"}`}>
                   {msg.text}
