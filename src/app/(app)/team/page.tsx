@@ -56,6 +56,7 @@ export default function TeamPage() {
   const [direct, setDirect] = useState<any[]>([]);
   const [level, setLevel] = useState<number | null>(null);
   const [levelUsers, setLevelUsers] = useState<any[]>([]);
+  const [levelTotal, setLevelTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [copied, setCopied] = useState(false);
@@ -70,11 +71,13 @@ export default function TeamPage() {
     if (level === null) {
       api.referrals(page, 10).then((r) => {
         setDirect(r.data.referrals);
+        setLevelTotal(r.data.levelInvestmentTotal ?? 0);
         setTotalPages(r.data.totalPages || 1);
       }).catch(() => {});
     } else {
       api.referralsByLevel(level, page, 10).then((r) => {
         setLevelUsers(r.data.referrals);
+        setLevelTotal(r.data.levelInvestmentTotal ?? 0);
         setTotalPages(r.data.totalPages || 1);
       }).catch(() => {});
     }
@@ -145,9 +148,7 @@ export default function TeamPage() {
                   {l.percent}%
                 </p>
                 <p className="text-[9px] text-[#5F7099]">
-                  {l.unlocked
-                    ? `${l.members} member${l.members === 1 ? "" : "s"}`
-                    : `${l.requiredDirects} directs`}
+                  {l.requiredDirects} directs
                 </p>
               </div>
             ))}
@@ -218,6 +219,12 @@ export default function TeamPage() {
             </select>
           }
         >
+          <div className="mb-3 flex items-center justify-between rounded-lg border border-[#1C2C50] bg-[#0A1226]/60 px-4 py-2.5">
+            <p className="text-xs text-[#8FA3CC]">
+              Total invested {level === null ? "by your directs" : `at level ${level}`}
+            </p>
+            <p className="ticker-numeric text-sm font-semibold text-emerald-300">{fmtUsd(levelTotal)}</p>
+          </div>
           {listShown.length === 0 ? (
             <EmptyState
               title="No members at this level yet"

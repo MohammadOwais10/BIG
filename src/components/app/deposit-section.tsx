@@ -79,7 +79,6 @@ export function DepositCard({
   const [amount, setAmount] = useState("");
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [submitted, setSubmitted] = useState(false);
-  const [copied, setCopied] = useState(false);
   const [tronReady, setTronReady] = useState(false);
   const [tronBusy, setTronBusy] = useState(false);
   const toast = useToast();
@@ -225,36 +224,6 @@ export function DepositCard({
             </button>
           ))}
         </div>
-      )}
-
-      {depositWallet ? (
-        <div className="mb-5 rounded-xl border border-[#1255FF]/40 bg-[#1255FF]/8 p-4">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#8FA3CC]">
-            Send USDT ({network}) to this address
-          </p>
-          <p className="mt-1.5 break-all font-mono text-xs leading-relaxed text-[#7FA8FF]">
-            {depositWallet}
-          </p>
-          <button
-            onClick={() => {
-              navigator.clipboard?.writeText(depositWallet);
-              setCopied(true);
-              setTimeout(() => setCopied(false), 1500);
-            }}
-            className="mt-2 text-xs font-semibold text-[#7FA8FF] hover:underline"
-          >
-            {copied ? "Copied!" : "Copy address"}
-          </button>
-          {isTron && (
-            <p className="mt-2 text-[10px] leading-relaxed text-[#5F7099]">
-              Or send from Binance/any exchange — select <b>USDT-TRC20</b>, then paste your tx hash below.
-            </p>
-          )}
-        </div>
-      ) : (
-        <p className="mb-5 rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-2.5 text-xs text-amber-300">
-          {network} deposit wallet is being configured by the admin.
-        </p>
       )}
 
       {!isTron &&
@@ -482,25 +451,38 @@ export function ManualDepositCard({ onCredited }: { onCredited?: () => void }) {
             <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#8FA3CC]">
               Scan QR or send USDT ({network}) to
             </p>
-            <p className="mt-1.5 break-all font-mono text-xs leading-relaxed text-amber-300">
-              {depositWallet}
-            </p>
-            <button
-              onClick={() => {
-                navigator.clipboard?.writeText(depositWallet);
-                setCopied(true);
-                setTimeout(() => setCopied(false), 1500);
-              }}
-              className="mt-2 text-xs font-semibold text-amber-300 hover:underline"
-            >
-              {copied ? "Copied!" : "Copy address"}
-            </button>
+            <div className="mt-1.5 flex items-center gap-2">
+              <p className="font-mono text-xs leading-relaxed text-amber-300">
+                {depositWallet.slice(0, 6)}…{depositWallet.slice(-6)}
+              </p>
+              <button
+                onClick={() => {
+                  navigator.clipboard?.writeText(depositWallet);
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 1500);
+                }}
+                title="Copy address"
+                aria-label="Copy address"
+                className="flex size-6 shrink-0 items-center justify-center rounded-md border border-amber-500/30 text-amber-300 transition hover:border-amber-400 hover:bg-amber-500/10"
+              >
+                {copied ? (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-3.5 text-emerald-300" aria-hidden>
+                    <path d="M20 6 9 17l-5-5" />
+                  </svg>
+                ) : (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-3.5" aria-hidden>
+                    <rect x="9" y="9" width="13" height="13" rx="2" />
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                  </svg>
+                )}
+              </button>
+            </div>
             <p className="mt-3 text-[10px] leading-relaxed text-[#5F7099]">
               {isTron
                 ? "Send USDT-TRC20 only — e.g. Binance → Withdraw → select TRON (TRC20)."
                 : "Send USDT-BEP20 only — e.g. Binance → Withdraw → select BSC (BEP20)."}
-              {" "}Amount <b className="text-[#9FB8EE]">100 ke multiples</b> mein hi bhejo —
-              101/150 jaisi values reject ho jayengi.
+              {" "}Amount must be in <b className="text-[#9FB8EE]">multiples of 100</b> only —
+              values like 101/150 will be rejected.
             </p>
           </div>
         </div>

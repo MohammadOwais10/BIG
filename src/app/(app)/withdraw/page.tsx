@@ -334,7 +334,7 @@ export default function WithdrawPage() {
 
   return (
     <>
-      <PageHeader title="Withdraw" sub="Minimum $15 · 5% fee · instant on-chain claim under the auto-payout cap" />
+      <PageHeader title="Withdraw" sub="Minimum $15 withdraw and 5% fee  instant on-chain claim under the auto-payout cap" />
 
       {pendingClaims.length > 0 && (
         <div className="mb-6 grid gap-4 md:grid-cols-2">
@@ -378,7 +378,7 @@ export default function WithdrawPage() {
         ) : (
         <Card
           title="New withdrawal"
-          subtitle={wallet ? `Available: ${fmtUsd(wallet.availableBalance)}` : undefined}
+          subtitle={tab === "balance" && wallet ? `Available: ${fmtUsd(wallet.availableBalance)}` : undefined}
           action={
             <div className="flex rounded-lg border border-[#24406E] p-0.5 text-[10px] font-semibold uppercase tracking-wider">
               {(["balance", "principal"] as const).map((t) => (

@@ -156,7 +156,7 @@ export default function DashboardPage() {
                 ))}
               </div>
               <p className="text-xs text-[#5F7099]">
-                Each member in the chain needs 2 directs (L1–5) or 1 direct (L6–20) for income to flow up.
+                Each member in the chain needs 2 directs (L1–L5) and 1 direct (L6–L20) for income to flow up.
               </p>
               <Link href="/team" className="mt-3 inline-block text-xs font-semibold text-[#7FA8FF] hover:underline">
                 View team →

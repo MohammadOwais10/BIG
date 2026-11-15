@@ -253,8 +253,7 @@ export const api = {
     apiFetch("/admin/daily-roi/process", { method: "POST", body: { roiDate } }),
   dailyRoiExclusions: (date?: string) =>
     apiFetch(`/admin/daily-roi/exclusions${qs({ date })}`),
-  supportCreate: (body: { subject: string; message: string }) =>
-    apiFetch("/support", { method: "POST", body }),
+  supportCreate: (form: FormData) => apiFetchForm("/support", form),
   supportMy: (page = 1, limit = 10) => apiFetch(`/support/my${qs({ page, limit })}`),
   adminSupport: (page = 1, limit = 20, status?: string) =>
     apiFetch(`/admin/support${qs({ page, limit, status })}`),

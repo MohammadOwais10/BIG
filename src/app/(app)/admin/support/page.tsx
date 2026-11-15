@@ -14,6 +14,7 @@ export default function AdminSupportPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [imgUrl, setImgUrl] = useState<string | null>(null);
   const [reply, setReply] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(false);
   const toast = useToast();
@@ -97,6 +98,14 @@ export default function AdminSupportPage() {
                 {expanded === t.id && (
                   <div className="mt-2 space-y-3 border-t border-[#16233F] pt-3 text-xs">
                     <p className="whitespace-pre-wrap text-[#8FA3CC]">{t.message}</p>
+                    {t.imageUrl && (
+                      <img
+                        src={t.imageUrl}
+                        alt="Attachment"
+                        onClick={() => setImgUrl(t.imageUrl)}
+                        className="h-24 w-auto cursor-zoom-in rounded-lg border border-[#24406E] object-cover transition hover:opacity-80"
+                      />
+                    )}
                     {t.adminReply && (
                       <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-3">
                         <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-emerald-300">
@@ -147,6 +156,19 @@ export default function AdminSupportPage() {
         )}
         <Pager page={page} totalPages={totalPages} onPage={setPage} />
       </Card>
+
+      {imgUrl && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+          onClick={() => setImgUrl(null)}
+        >
+          <img
+            src={imgUrl}
+            alt="Attachment"
+            className="max-h-[90vh] max-w-[90vw] rounded-lg border border-[#24406E] object-contain"
+          />
+        </div>
+      )}
     </>
   );
 }

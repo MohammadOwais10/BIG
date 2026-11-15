@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { api, fmtDate, ApiError } from "@/lib/api";
 import { PageHeader } from "@/components/app/app-shell";
 import { Card, Badge, Spinner, EmptyState, Pager, Field, inputCls, btnPrimary } from "@/components/app/ui";
@@ -15,6 +15,9 @@ export default function SupportPage() {
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
   const [open, setOpen] = useState<string | null>(null);
+  const [imgUrl, setImgUrl] = useState<string | null>(null);
+  const [image, setImage] = useState<File | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
   const toast = useToast();
 
   async function load() {
@@ -39,10 +42,16 @@ export default function SupportPage() {
     e.preventDefault();
     setBusy(true);
     try {
-      await api.supportCreate({ subject: subject.trim(), message: message.trim() });
+      const form = new FormData();
+      form.append("subject", subject.trim());
+      form.append("message", message.trim());
+      if (image) form.append("image", image);
+      await api.supportCreate(form);
       toast("Ticket submitted — admin will respond soon", "success");
       setSubject("");
       setMessage("");
+      setImage(null);
+      if (fileRef.current) fileRef.current.value = "";
       setPage(1);
       await load();
     } catch (err) {
@@ -81,6 +90,15 @@ export default function SupportPage() {
                 required
               />
             </Field>
+            <Field label="Attach screenshot (optional)">
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className={inputCls + " file:mr-3 file:rounded-md file:border-0 file:bg-[#1255FF]/20 file:px-3 file:py-1 file:text-xs file:text-[#7FA8FF]"}
+                onChange={(e) => setImage(e.target.files?.[0] ?? null)}
+              />
+            </Field>
             <button disabled={busy} className={`${btnPrimary} w-full`}>
               {busy ? "Submitting…" : "Submit ticket"}
             </button>
@@ -113,6 +131,14 @@ export default function SupportPage() {
                     {open === t.id && (
                       <div className="mt-2 space-y-2 border-t border-[#16233F] pt-2 text-xs">
                         <p className="whitespace-pre-wrap text-[#8FA3CC]">{t.message}</p>
+                        {t.imageUrl && (
+                          <img
+                            src={t.imageUrl}
+                            alt="Attachment"
+                            onClick={() => setImgUrl(t.imageUrl)}
+                            className="h-24 w-auto cursor-zoom-in rounded-lg border border-[#24406E] object-cover transition hover:opacity-80"
+                          />
+                        )}
                         {t.adminReply ? (
                           <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-3">
                             <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-emerald-300">
@@ -133,6 +159,19 @@ export default function SupportPage() {
           </Card>
         </div>
       </div>
+
+      {imgUrl && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+          onClick={() => setImgUrl(null)}
+        >
+          <img
+            src={imgUrl}
+            alt="Attachment"
+            className="max-h-[90vh] max-w-[90vw] rounded-lg border border-[#24406E] object-contain"
+          />
+        </div>
+      )}
     </>
   );
 }
