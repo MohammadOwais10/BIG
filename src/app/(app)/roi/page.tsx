@@ -5,6 +5,10 @@ import { api, fmtUsd, fmtDate } from "@/lib/api";
 import { PageHeader } from "@/components/app/app-shell";
 import { Card, StatCard, Badge, Spinner, EmptyState, Pager } from "@/components/app/ui";
 
+// Legacy monthly-ROI history (RoiEarning) — the monthly job is retired; only
+// daily ROI payouts are credited now. Flip to true to show old records again.
+const SHOW_LEGACY_EARNINGS = false;
+
 export default function RoiPage() {
   const [summary, setSummary] = useState<any>(null);
   const [history, setHistory] = useState<any[]>([]);
@@ -71,6 +75,7 @@ export default function RoiPage() {
         />
       </div>
 
+      {SHOW_LEGACY_EARNINGS && (
       <Card title="Earning history" className="mt-6">
         {loading ? (
           <Spinner />
@@ -115,6 +120,7 @@ export default function RoiPage() {
         )}
         <Pager page={page} totalPages={totalPages} onPage={setPage} />
       </Card>
+      )}
 
       <Card title="Daily ROI payouts" subtitle="Variable daily rate set by admin" className="mt-6">
         {dailyLoading ? (

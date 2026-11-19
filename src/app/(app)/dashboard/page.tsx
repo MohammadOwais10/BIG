@@ -40,7 +40,7 @@ export default function DashboardPage() {
   return (
     <>
       <PageHeader
-        title={`Hello, ${user?.name?.split(" ")[0] ?? "there"}`}
+        title={`Hello, ${user?.name ?? "there"}`}
         sub="Your investment overview"
       />
 

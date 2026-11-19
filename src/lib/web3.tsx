@@ -18,6 +18,10 @@ export const DEPOSIT_WALLET = (process.env.NEXT_PUBLIC_PLATFORM_WALLET ??
 
 export const USDT_DECIMALS = 18;
 
+// TRON (TRC20) USDT — manual admin payouts via TronLink
+export const TRON_USDT_CONTRACT = process.env.NEXT_PUBLIC_TRON_USDT_CONTRACT ?? "";
+export const TRON_USDT_DECIMALS = Number(process.env.NEXT_PUBLIC_TRON_USDT_DECIMALS ?? 6);
+
 const queryClient = new QueryClient();
 
 export const wagmiAdapter = new WagmiAdapter({

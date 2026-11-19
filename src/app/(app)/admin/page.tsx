@@ -64,9 +64,8 @@ export default function AdminDashboard() {
 
       {/* Distributed */}
       <p className="mb-3 mt-6 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#5F7099]">Distributed to users</p>
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard label="Daily ROI" value={fmtUsd(s.totalDailyRoi)} accent />
-        <StatCard label="ROI (legacy)" value={fmtUsd(s.totalRoiDistributed)} />
         <StatCard label="Direct commissions" value={fmtUsd(s.totalDirectCommissions)} />
         <StatCard label="Level commissions" value={fmtUsd(s.totalLevelCommissions)} />
         <StatCard label="Rank rewards" value={fmtUsd(s.totalRankRewards)} hint={`${s.rankRewardsCount ?? 0} claimed`} />

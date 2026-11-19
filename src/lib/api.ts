@@ -177,6 +177,8 @@ export const api = {
     apiFetch("/users/me/withdrawal-password/request-otp", { method: "POST" }),
   setWithdrawalPassword: (newPassword: string, otp?: string) =>
     apiFetch("/users/me/withdrawal-password", { method: "POST", body: { newPassword, ...(otp ? { otp } : {}) } }),
+  changePassword: (currentPassword: string, newPassword: string) =>
+    apiFetch("/users/me/password", { method: "POST", body: { currentPassword, newPassword } }),
   updateMe: (body: { name?: string; mobile?: string }) =>
     apiFetch("/users/me", { method: "PATCH", body }),
   dashboard: () => apiFetch("/dashboard"),

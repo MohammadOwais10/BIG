@@ -274,9 +274,10 @@ export default function WithdrawPage() {
     try {
       if (tab === "balance") {
         const r = await api.createWithdrawal(Number(amount), destination.trim(), newIdemKey(), wdPassword);
-        const text = r.data?.claim
-          ? "Withdrawal approved — claim your USDT below."
-          : "Withdrawal request submitted for admin approval.";
+        const w = r.data?.withdrawal;
+        const text = w?.status === "COMPLETED"
+          ? `Withdrawal sent — ${fmtUsd(w.netAmount)} USDT on the way.`
+          : "Withdrawal request submitted — you'll receive it within 2–4 hours.";
         setMsg({ ok: true, text });
         toast(text, "success");
       } else {
@@ -286,9 +287,10 @@ export default function WithdrawPage() {
           principalAmount ? Number(principalAmount) : undefined,
           wdPassword
         );
-        const text = r.data?.claim
-          ? "Withdrawal approved — claim your USDT below."
-          : "Principal withdrawal request submitted.";
+        const pw = r.data?.withdrawal;
+        const text = pw?.status === "COMPLETED"
+          ? `Withdrawal sent — ${fmtUsd(pw.netAmount)} USDT on the way.`
+          : "Principal withdrawal submitted — you'll receive it within 2–4 hours.";
         setMsg({ ok: true, text });
         toast(text, "success");
       }
@@ -524,6 +526,9 @@ export default function WithdrawPage() {
                       <p className="text-sm font-medium text-[#CBD6EC]">{w.kind ?? "BALANCE"}</p>
                       <Badge value={w.status} />
                     </div>
+                    {w.status === "PENDING" && (
+                      <p className="mt-1 text-[10px] text-amber-300/80">Processing — expected within 2–4 hours</p>
+                    )}
                     <p className="ticker-numeric mt-1 text-xs text-[#8FA3CC]">
                       {fmtUsd(w.amount)} · fee {fmtUsd(w.fee)} · net{" "}
                       <span className="text-emerald-300">{fmtUsd(w.netAmount)}</span>
@@ -567,7 +572,12 @@ export default function WithdrawPage() {
                         <td className="ticker-numeric py-3 pr-4">{fmtUsd(w.amount)}</td>
                         <td className="ticker-numeric py-3 pr-4 text-[#8FA3CC]">{fmtUsd(w.fee)}</td>
                         <td className="ticker-numeric py-3 pr-4 text-emerald-300">{fmtUsd(w.netAmount)}</td>
-                        <td className="py-3 pr-4"><Badge value={w.status} /></td>
+                        <td className="py-3 pr-4">
+                          <Badge value={w.status} />
+                          {w.status === "PENDING" && (
+                            <p className="mt-1 text-[10px] text-amber-300/80">2–4 hours</p>
+                          )}
+                        </td>
                         <td className="py-3 pr-4">
                           {w.payoutTxHash ? (
                             <span className="inline-flex items-center gap-1.5">

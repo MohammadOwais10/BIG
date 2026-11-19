@@ -14,7 +14,7 @@ function AvatarButton() {
 
   return (
     <button
-      onClick={() => router.push("/profile")}
+      onClick={() => router.push(user?.role === "ADMIN" ? "/admin/profile" : "/profile")}
       title="My profile"
       className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full border-2 border-[#24406E] bg-[#0A1226] transition hover:border-[#1255FF]"
     >

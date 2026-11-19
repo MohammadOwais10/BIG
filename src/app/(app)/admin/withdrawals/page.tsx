@@ -5,7 +5,7 @@ import { useAppKit, useAppKitAccount } from "@reown/appkit/react";
 import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { parseUnits } from "viem";
 import { api, fmtUsd, fmtDate, ApiError } from "@/lib/api";
-import { USDT_CONTRACT, USDT_DECIMALS } from "@/lib/web3";
+import { USDT_CONTRACT, USDT_DECIMALS, TRON_USDT_CONTRACT, TRON_USDT_DECIMALS } from "@/lib/web3";
 import { PageHeader } from "@/components/app/app-shell";
 import { Card, Badge, Spinner, EmptyState, Pager, inputCls } from "@/components/app/ui";
 import { WalletConnect } from "@/components/app/wallet-connect";
@@ -13,6 +13,9 @@ import { Copyable } from "@/components/app/ui";
 import { useToast } from "@/components/app/toast";
 
 const STATUSES = ["", "PENDING", "APPROVED", "PROCESSING", "COMPLETED", "REJECTED", "CANCELLED"];
+// Smart-contract payout vaults are bypassed — payouts go direct from the hot
+// wallet / admin wallet now. Flip to true to show the vault panel again.
+const SHOW_VAULTS = false;
 
 const ERC20_ABI = [
   {
@@ -68,22 +71,42 @@ export default function AdminWithdrawals() {
   const [submittedHash, setSubmittedHash] = useState<string | null>(null);
   const [awaitingConnect, setAwaitingConnect] = useState<any>(null);
   const [treasury, setTreasury] = useState<any>(null);
+  const [alertEmail, setAlertEmail] = useState("");
+  const [emailBusy, setEmailBusy] = useState(false);
   const [sweepingTron, setSweepingTron] = useState<string | null>(null);
   const [ownerTarget, setOwnerTarget] = useState<Record<string, string>>({});
   const [ownerOpen, setOwnerOpen] = useState<string | null>(null);
   const [ownerBusyTron, setOwnerBusyTron] = useState<string | null>(null);
+  const [tronAddr, setTronAddr] = useState("");
+  const [manualTx, setManualTx] = useState<Record<string, string>>({});
+  const [marking, setMarking] = useState<string | null>(null);
   const toast = useToast();
+
+  // Show which TronLink account (if any) is connected for TRC20 payouts.
+  useEffect(() => {
+    const read = () => {
+      const tw = (window as any).tronWeb;
+      setTronAddr(tw?.ready ? tw.defaultAddress?.base58 ?? "" : "");
+    };
+    read();
+    const t = setInterval(read, 2000);
+    return () => clearInterval(t);
+  }, []);
 
   async function load() {
     setLoading(true);
     try {
-      const [r, t] = await Promise.all([
+      const [r, t, s] = await Promise.all([
         api.adminWithdrawals(page, 15, status || undefined),
         api.adminPayoutTreasury().catch(() => null),
+        api.adminSettings().catch(() => null),
       ]);
       setList(r.data.withdrawals);
       setTotalPages(r.data.totalPages || 1);
       if (t) setTreasury(t.data);
+      const rows = s?.data?.settings ?? s?.data ?? [];
+      const emailRow = rows.find?.((x: any) => x.key === "ADMIN_NOTIFY_EMAIL");
+      if (emailRow) setAlertEmail(emailRow.value);
     } finally {
       setLoading(false);
     }
@@ -93,6 +116,18 @@ export default function AdminWithdrawals() {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, status]);
+
+  async function saveAlertEmail() {
+    setEmailBusy(true);
+    try {
+      await api.adminUpdateSetting("ADMIN_NOTIFY_EMAIL", alertEmail.trim());
+      toast("Withdrawal alert email saved", "success");
+    } catch (e) {
+      toast(e instanceof ApiError ? e.message : "Failed to save email", "error");
+    } finally {
+      setEmailBusy(false);
+    }
+  }
 
   // Once payout tx is mined, mark the withdrawal completed with the txHash
   useEffect(() => {
@@ -203,7 +238,98 @@ export default function AdminWithdrawals() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ownerMined, ownerHash]);
 
+  // TRC20 manual payout — TronLink sends USDT, then backend verifies on-chain.
+  // TronGrid takes a few seconds to index the tx, so retry the confirm call.
+  async function payTron(w: any) {
+    if (!TRON_USDT_CONTRACT) return toast("TRON USDT contract not configured", "error");
+    // TronLink injects tronWeb only on the Tron network; if the site hasn't been
+    // connected yet, proactively request accounts so the connect popup opens.
+    let tw = (window as any).tronWeb;
+    if (!tw?.ready) {
+      const tronLink = (window as any).tronLink;
+      if (!tronLink) return toast("TronLink extension not found — install/unlock it first", "error");
+      try {
+        const res = await tronLink.request({ method: "tron_requestAccounts" });
+        if (res?.code !== 200) return toast("TronLink connection rejected", "error");
+        for (let i = 0; i < 10 && !(window as any).tronWeb?.ready; i++) {
+          await new Promise((r) => setTimeout(r, 300));
+        }
+        tw = (window as any).tronWeb;
+      } catch {
+        return toast("TronLink connection failed — unlock the extension and retry", "error");
+      }
+    }
+    if (!tw?.ready) return toast("Connect TronLink first — pay from the payout wallet", "error");
+    setPaying(w);
+    setMsg(null);
+    try {
+      const host = tw.fullNode?.host || "";
+      setTronAddr(tw.defaultAddress.base58);
+      // Pre-checks so failures explain themselves instead of "Unknown error".
+      const info = await tw.trx.getContract(TRON_USDT_CONTRACT).catch(() => null);
+      if (!info?.contract_address) {
+        throw new Error(`USDT contract not found on ${host} — switch TronLink to the correct network`);
+      }
+      const sun = await tw.trx.getBalance(tw.defaultAddress.base58).catch(() => 0);
+      if (Number(sun) < 20_000_000) {
+        throw new Error(`Only ${(Number(sun) / 1e6).toFixed(1)} TRX in payout wallet — need ~30+ TRX for energy`);
+      }
+      const c = await tw.contract().at(TRON_USDT_CONTRACT);
+      const raw = BigInt(Math.round(Number(w.netAmount) * 10 ** TRON_USDT_DECIMALS)).toString();
+      const txid = await c.transfer(w.destinationAddress, raw).send({ feeLimit: 100_000_000 });
+
+      let done = false;
+      let lastErr = "";
+      for (let i = 0; i < 4 && !done; i++) {
+        await new Promise((r) => setTimeout(r, 4000));
+        try {
+          await api.adminCompleteWithdrawal(w.id, txid);
+          done = true;
+        } catch (e) {
+          lastErr = e instanceof ApiError ? e.message : "Verification failed";
+        }
+      }
+      if (done) {
+        setMsg({ ok: true, text: "Payout verified on-chain — withdrawal completed." });
+        toast(`Withdrawal of ${fmtUsd(w.netAmount)} USDT paid and completed`, "success");
+        await load();
+      } else {
+        setMsg({ ok: false, text: `Sent (${txid.slice(0, 12)}…) but verify failed: ${lastErr}` });
+      }
+    } catch (e: any) {
+      console.error("TRC20 payout failed:", e);
+      toast(e?.message?.split("\n")[0] || "Tron payout failed", "error");
+    } finally {
+      setPaying(null);
+    }
+  }
+
+  // Already paid outside this page (or a pay flow that sent but verify failed)?
+  // Paste the tx hash — backend verifies it on-chain and completes the withdrawal.
+  async function markPaid(w: any) {
+    const hash = (manualTx[w.id] ?? "").trim();
+    if (!/^(0x)?[0-9a-fA-F]{64}$/.test(hash)) {
+      return toast("Enter a valid 64-char tx hash", "error");
+    }
+    setMarking(w.id);
+    setMsg(null);
+    try {
+      await api.adminCompleteWithdrawal(w.id, hash);
+      setMsg({ ok: true, text: "Payout verified on-chain — withdrawal completed." });
+      setManualTx((s) => ({ ...s, [w.id]: "" }));
+      await load();
+    } catch (e) {
+      setMsg({ ok: false, text: e instanceof ApiError ? e.message : "Verification failed" });
+    } finally {
+      setMarking(null);
+    }
+  }
+
   function startPay(w: any) {
+    if (w.network === "TRC20") {
+      payTron(w);
+      return;
+    }
     setPaying(w);
     setMsg(null);
     writeContract({
@@ -217,6 +343,11 @@ export default function AdminWithdrawals() {
   // Approve = connect wallet (if needed) → send USDT to the user's address →
   // tx confirmed → backend verifies and completes. No separate step.
   function approveAndPay(w: any) {
+    // TRC20 pays via TronLink — the EVM payout wallet is not required.
+    if (w.network === "TRC20") {
+      payTron(w);
+      return;
+    }
     if (!isConnected) {
       setAwaitingConnect(w);
       open();
@@ -272,12 +403,20 @@ export default function AdminWithdrawals() {
               Payout wallet
             </p>
             <p className="mt-0.5 text-xs text-[#5F7099]">
-              {isConnected ? "Connected — USDT payouts will be sent from this wallet" : "Connect a wallet holding USDT to pay withdrawals"}
+              {isConnected ? "Connected — USDT payouts will be sent from this wallet" : "Connect a wallet holding USDT to pay BEP20 withdrawals"}
+            </p>
+            <p className="mt-0.5 text-xs text-[#5F7099]">
+              TRC20 via TronLink:{" "}
+              {tronAddr ? (
+                <span className="font-semibold text-emerald-300">{tronAddr.slice(0, 8)}…{tronAddr.slice(-6)}</span>
+              ) : (
+                <span className="text-amber-300">not connected — unlock TronLink on the Tron network</span>
+              )}
             </p>
           </div>
           <WalletConnect />
         </div>
-        {treasury?.autoClaimEnabled && (
+        {SHOW_VAULTS && treasury?.autoClaimEnabled && (
           <div className="mb-4 flex flex-wrap items-center gap-x-6 gap-y-2 rounded-xl border border-[#1C2C50] bg-[#0A1226]/60 px-4 py-3">
             <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#8FA3CC]">
               Payout vaults <span className="normal-case text-[#5F7099]">(auto-claim under ${treasury.autoClaimMaxUsd})</span>
@@ -349,6 +488,26 @@ export default function AdminWithdrawals() {
             )}
           </div>
         )}
+        <div className="mb-4 flex flex-wrap items-center gap-2 rounded-xl border border-[#1C2C50] bg-[#0A1226]/60 px-4 py-3">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#8FA3CC]">Alert email</p>
+          <input
+            className={`${inputCls} !w-72 py-1.5 text-xs`}
+            type="email"
+            placeholder="admin@example.com"
+            value={alertEmail}
+            onChange={(e) => setAlertEmail(e.target.value)}
+          />
+          <button
+            onClick={saveAlertEmail}
+            disabled={emailBusy || !alertEmail.trim()}
+            className="rounded-md border border-emerald-500/40 bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold text-emerald-300 hover:bg-emerald-500/20 disabled:opacity-50"
+          >
+            {emailBusy ? "Saving…" : "Save"}
+          </button>
+          <p className="w-full text-[10px] text-[#5F7099]">
+            Every new withdrawal request sends an alert to this address.
+          </p>
+        </div>
         {msg && (
           <p className={`mb-4 rounded-lg border px-4 py-2.5 text-sm ${msg.ok ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300" : "border-red-500/30 bg-red-500/10 text-red-300"}`}>
             {msg.text}
@@ -391,12 +550,16 @@ export default function AdminWithdrawals() {
                       <p className="mt-0.5">
                         <Copyable value={w.payoutTxHash} label="tx" />
                         <a
-                          href={`https://testnet.bscscan.com/tx/${w.payoutTxHash}`}
+                          href={
+                            w.network === "TRC20"
+                              ? `https://nile.tronscan.org/#/transaction/${w.payoutTxHash}`
+                              : `https://testnet.bscscan.com/tx/${w.payoutTxHash}`
+                          }
                           target="_blank"
                           rel="noreferrer"
                           className="ml-2 font-mono text-[10px] text-emerald-300 hover:underline"
                         >
-                          BscScan ↗
+                          {w.network === "TRC20" ? "Tronscan" : "BscScan"} ↗
                         </a>
                       </p>
                     )}
@@ -434,6 +597,19 @@ export default function AdminWithdrawals() {
                       className="rounded-lg border border-red-500/40 px-3 py-1.5 text-xs font-semibold text-red-300 hover:bg-red-500/10"
                     >
                       Reject
+                    </button>
+                    <input
+                      className={`${inputCls} !w-64 py-1.5 font-mono text-xs`}
+                      placeholder="Already paid? paste tx hash"
+                      value={manualTx[w.id] ?? ""}
+                      onChange={(e) => setManualTx((s) => ({ ...s, [w.id]: e.target.value }))}
+                    />
+                    <button
+                      onClick={() => markPaid(w)}
+                      disabled={marking === w.id}
+                      className="rounded-lg border border-sky-500/40 px-3 py-1.5 text-xs font-semibold text-sky-300 hover:bg-sky-500/10 disabled:opacity-50"
+                    >
+                      {marking === w.id ? "Verifying…" : "Mark paid"}
                     </button>
                   </div>
                 )}

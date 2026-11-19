@@ -493,7 +493,7 @@ export function ManualDepositCard({ onCredited }: { onCredited?: () => void }) {
       )}
 
       <form onSubmit={submit} className="mt-5 border-t border-[#16233F] pt-5">
-        <Field label={`${network} transaction hash`} hint="Deposit history mein credit hone tak thoda wait lag sakta hai">
+        <Field label={`${network} transaction hash`} hint="It may take a few minutes for the deposit to appear in your history">
           <input
             className={inputCls + " font-mono text-xs"}
             placeholder={isTron ? "64-char Tron tx id…" : "0x…"}
