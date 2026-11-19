@@ -5,6 +5,7 @@ import { useAppKit, useAppKitAccount } from "@reown/appkit/react";
 import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { useToast } from "@/components/app/toast";
 import { api, fmtUsd, fmtDate, newIdemKey, ApiError } from "@/lib/api";
+import { txExplorerUrl as explorerTxUrl } from "@/lib/web3";
 import { useAuth } from "@/lib/auth-context";
 import { PageHeader } from "@/components/app/app-shell";
 import { Card, Badge, Spinner, EmptyState, Pager, Field, Copyable, inputCls, btnPrimary, btnGhost } from "@/components/app/ui";
@@ -26,11 +27,7 @@ const PAYOUT_ABI = [
   },
 ] as const;
 
-function explorerTxUrl(network: string, hash: string) {
-  return network === "TRC20"
-    ? `https://nile.tronscan.org/#/transaction/${hash}`
-    : `https://testnet.bscscan.com/tx/${hash}`;
-}
+
 
 // Card shown for a PROCESSING withdrawal that carries a signed voucher.
 // The user calls contract.claim() themselves — the backend only signed it.
@@ -105,7 +102,7 @@ function ClaimCard({ w, onDone }: { w: any; onDone: () => void }) {
     setErr(null);
     const tw = (window as any).tronWeb;
     if (!tw?.ready) {
-      return setErr("TronLink wallet not detected — install TronLink and connect it to the Nile testnet.");
+      return setErr("TronLink wallet not detected — install TronLink and connect it to the Tron network.");
     }
     setBusy(true);
     try {

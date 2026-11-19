@@ -5,7 +5,7 @@ import { useAppKit, useAppKitAccount } from "@reown/appkit/react";
 import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { parseUnits } from "viem";
 import { api, fmtUsd, fmtDate, ApiError } from "@/lib/api";
-import { USDT_CONTRACT, USDT_DECIMALS, TRON_USDT_CONTRACT, TRON_USDT_DECIMALS } from "@/lib/web3";
+import { USDT_CONTRACT, USDT_DECIMALS, TRON_USDT_CONTRACT, TRON_USDT_DECIMALS, txExplorerUrl } from "@/lib/web3";
 import { PageHeader } from "@/components/app/app-shell";
 import { Card, Badge, Spinner, EmptyState, Pager, inputCls } from "@/components/app/ui";
 import { WalletConnect } from "@/components/app/wallet-connect";
@@ -550,11 +550,7 @@ export default function AdminWithdrawals() {
                       <p className="mt-0.5">
                         <Copyable value={w.payoutTxHash} label="tx" />
                         <a
-                          href={
-                            w.network === "TRC20"
-                              ? `https://nile.tronscan.org/#/transaction/${w.payoutTxHash}`
-                              : `https://testnet.bscscan.com/tx/${w.payoutTxHash}`
-                          }
+                          href={txExplorerUrl(w.network, w.payoutTxHash)}
                           target="_blank"
                           rel="noreferrer"
                           className="ml-2 font-mono text-[10px] text-emerald-300 hover:underline"

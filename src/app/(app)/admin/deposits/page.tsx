@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { api, fmtUsd, fmtDate, ApiError } from "@/lib/api";
+import { txExplorerUrl } from "@/lib/web3";
 import { PageHeader } from "@/components/app/app-shell";
 import { Card, Badge, Spinner, EmptyState, Pager, Field, Copyable, inputCls, btnPrimary } from "@/components/app/ui";
 
@@ -204,9 +205,7 @@ export default function AdminDeposits() {
                       <span className="inline-flex items-center gap-1.5">
                         <Copyable value={d.txHash} />
                         <a
-                          href={d.network === "TRC20"
-                            ? `https://nile.tronscan.org/#/transaction/${d.txHash.replace(/^trc20:/, "")}`
-                            : `https://testnet.bscscan.com/tx/${d.txHash}`}
+                          href={txExplorerUrl(d.network, d.txHash.replace(/^trc20:/, ""))}
                           target="_blank"
                           rel="noreferrer"
                           className="text-[10px] text-emerald-300 hover:underline"

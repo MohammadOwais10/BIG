@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { api, fmtUsd, fmtDate, ApiError } from "@/lib/api";
+import { txExplorerUrl } from "@/lib/web3";
 import { useToast } from "@/components/app/toast";
 import { PageHeader } from "@/components/app/app-shell";
 import { Card, Badge, Spinner, EmptyState, Copyable, btnGhost } from "@/components/app/ui";
@@ -110,11 +111,7 @@ export default function DepositPage() {
                           <>
                             <Copyable value={rawHash} />
                             <a
-                              href={
-                                isTron
-                                  ? `https://nile.tronscan.org/#/transaction/${rawHash}`
-                                  : `https://testnet.bscscan.com/tx/${rawHash}`
-                              }
+                              href={txExplorerUrl(isTron ? "TRC20" : "BEP20", rawHash)}
                               target="_blank"
                               rel="noreferrer"
                               className="ml-1.5 font-mono text-[10px] text-emerald-300 hover:underline"

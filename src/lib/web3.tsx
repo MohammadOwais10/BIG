@@ -4,10 +4,14 @@ import { WagmiProvider } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 import { createAppKit } from "@reown/appkit/react";
-import { bscTestnet } from "@reown/appkit/networks";
+import { bsc, bscTestnet } from "@reown/appkit/networks";
 import type { ReactNode } from "react";
 
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID ?? "0268bdf2515ec528e27d6e1b8ee87e88";
+
+// Live deploys set NEXT_PUBLIC_BSC_NETWORK=mainnet; local dev stays on testnet.
+const BSC_NETWORK =
+  (process.env.NEXT_PUBLIC_BSC_NETWORK ?? "testnet") === "mainnet" ? bsc : bscTestnet;
 
 export const USDT_CONTRACT =
   (process.env.NEXT_PUBLIC_USDT_CONTRACT ??
@@ -22,10 +26,20 @@ export const USDT_DECIMALS = 18;
 export const TRON_USDT_CONTRACT = process.env.NEXT_PUBLIC_TRON_USDT_CONTRACT ?? "";
 export const TRON_USDT_DECIMALS = Number(process.env.NEXT_PUBLIC_TRON_USDT_DECIMALS ?? 6);
 
+// Block explorers — defaults are testnet; production sets the mainnet URLs.
+const BSC_TX_EXPLORER =
+  process.env.NEXT_PUBLIC_BSC_EXPLORER_TX ?? "https://testnet.bscscan.com/tx/";
+const TRON_TX_EXPLORER =
+  process.env.NEXT_PUBLIC_TRON_EXPLORER_TX ?? "https://nile.tronscan.org/#/transaction/";
+
+export function txExplorerUrl(network: string | undefined | null, hash: string) {
+  return `${network === "TRC20" ? TRON_TX_EXPLORER : BSC_TX_EXPLORER}${hash}`;
+}
+
 const queryClient = new QueryClient();
 
 export const wagmiAdapter = new WagmiAdapter({
-  networks: [bscTestnet],
+  networks: [BSC_NETWORK],
   projectId,
   ssr: true,
 });
@@ -38,7 +52,7 @@ export function ensureAppKit() {
 
   createAppKit({
     adapters: [wagmiAdapter],
-    networks: [bscTestnet],
+    networks: [BSC_NETWORK],
     projectId,
     metadata: {
       name: "BIG",
